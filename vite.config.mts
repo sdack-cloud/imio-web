@@ -2,16 +2,16 @@ import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { createHtmlPlugin } from 'vite-plugin-html'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-const autoprefixer = require('autoprefixer')
-const path = require('path')
-
+import autoprefixer from 'autoprefixer'
+import path from 'path'
+import { fileURLToPath, URL } from 'node:url'
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
-const config = ({ mode }) => {
+
+export default defineConfig(({ mode }) => {
     const isProd = mode === 'production'
     const envPrefix = 'APP_'
     const { APP_TITLE = '' } = loadEnv(mode, process.cwd(), envPrefix)
-    // @ts-ignore
-    // @ts-ignore
+    
     return {
         plugins: [
             vue(),
@@ -36,14 +36,14 @@ const config = ({ mode }) => {
             }),
         ],
         build: {
-            target: 'es2015',
-            outDir: path.resolve(__dirname, 'dist'),
+            target: 'esnext',
+            outDir: path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'dist'),
             assetsDir: 'assets',
             assetsInlineLimit: 8192,
             sourcemap: !isProd,
             emptyOutDir: true,
             rollupOptions: {
-                input: path.resolve(__dirname, 'index.html'),
+                input: path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'index.html'),
                 output: {
                     chunkFileNames: 'js/[name].[hash].js',
                     entryFileNames: 'js/[name].[hash].js',
@@ -53,7 +53,7 @@ const config = ({ mode }) => {
         envPrefix,
         resolve: {
             alias: [
-                { find: /^@\//, replacement: path.resolve(__dirname, 'src') + '/' },
+                { find: /^@\//, replacement: path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'src') + '/' },
                 { find: /^~/, replacement: '' }
             ],
             extensions: ['.ts', '.tsx', '.js', '.mjs', '.vue', '.json', '.less', '.css']
@@ -67,7 +67,7 @@ const config = ({ mode }) => {
             preprocessorOptions: {
                 less: {
                     javascriptEnabled: true,
-                    additionalData: `@import "${path.resolve(__dirname, 'src/styles/variable.less')}";`
+                    additionalData: `@import "${path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'src/styles/variable.less')}";`
                 }
             }
         },
@@ -78,6 +78,4 @@ const config = ({ mode }) => {
             port: 5000
         }
     }
-}
-
-export default defineConfig(config)
+})
