@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref , reactive} from 'vue'
 
 export const useAppStore = defineStore('app', () => {
   // 状态
@@ -7,7 +7,10 @@ export const useAppStore = defineStore('app', () => {
   const sidebarCollapsed = ref(false)
   const pageTitle = ref('View UI Plus Admin')
   const loading = ref(false)
-
+  const windowMedia = reactive({
+    innerHeight: '100%',
+    innerWidth:'100%'
+  })
   // 动作
   const toggleTheme = () => {
     theme.value = theme.value === 'light' ? 'dark' : 'light'
@@ -34,6 +37,7 @@ export const useAppStore = defineStore('app', () => {
     sidebarCollapsed,
     pageTitle,
     loading,
+    windowMedia,
     // 动作
     toggleTheme,
     toggleSidebar,

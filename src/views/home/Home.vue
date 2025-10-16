@@ -6,20 +6,13 @@ import {Sider} from "view-ui-plus";
 
 <template>
 <ActionBar title="首页" :isBack="false"/>
-
+  <div class="page-body">
+  </div>
 </template>
 
 <style scoped>
-.layout{
-  border: 1px solid #d7dde4;
-  background: #f5f7f9;
-  position: relative;
-  border-radius: 4px;
-  overflow: hidden;
+.page-body {
+  height: 100%;
+  width: 100%;
 }
-.layout-header-bar{
-  background: #fff;
-  box-shadow: 0 1px 1px rgba(0,0,0,.1);
-}
-.dev-run-preview .dev-run-preview-edit{ display: none }
 </style>

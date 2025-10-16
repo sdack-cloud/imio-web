@@ -2,10 +2,27 @@ import {createRouter, createWebHashHistory, createWebHistory} from 'vue-router'
 import routes from './routes'
 import Cookies from 'js-cookie';
 
+// 在应用启动时检查并重定向URL
+if (typeof window !== 'undefined') {
+    /*
+    解决 Hash 第一次访问带参数 Hash模式 会改变成 localhost:5173/?a=123#/ 导致无法获取参数问题
+     */
+    const url = new URL(window.location.href)
+    const hasQuery = url.search && url.search.length > 1
+    const hasHash = url.hash && url.hash.length > 1
+
+    // 如果有查询参数但没有hash，重定向到正确的hash格式
+    if (hasQuery && !hasHash) {
+        const queryString = url.search
+        window.location.replace(`${url.origin}${url.pathname}#/${queryString}`)
+    }
+}
+
 let router = createRouter({
     routes,
     history: createWebHashHistory()
 });
+
 
 /**
  * 路由拦截

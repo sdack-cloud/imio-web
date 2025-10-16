@@ -9,8 +9,25 @@
 import {Footer, FooterToolbar} from "view-ui-plus";
 import HomeFooterBar from "@/components/HomeFooterBar.vue";
 import {useRouter} from "vue-router";
+import {useAppStore} from "@/stores/app.ts";
+import {getCurrentInstance} from "vue";
 let router = useRouter();
+let appStore  = useAppStore();
+let instance = getCurrentInstance();
 
+appStore.windowMedia.innerHeight = window.innerWidth+""
+appStore.windowMedia.innerHeight = window.innerHeight+""
+
+window.addEventListener('resize', (e: any) => {
+  appStore.windowMedia.innerHeight = e.target.innerHeight+"";
+  appStore.windowMedia.innerWidth = e.target.innerWidth+"";
+
+  instance?.proxy?.$Message.info("Height:"+e.target.innerHeight)
+  console.log(appStore.windowMedia.innerHeight)
+  console.log(appStore.windowMedia.innerWidth)
+
+
+})
 function jump(pos: number) {
   switch (pos) {
     case 0:

@@ -88,6 +88,87 @@ const frameOut : RouteRecordRaw[] = [
         ]
     },
     {
+        path: '/chat',
+        name: 'Chat',
+        component: () => import('@/views/chat/Chat.vue'),
+        meta: {
+            title: '对话'
+        }
+    },
+    {
+        path: '/buddyInfo',
+        name: 'BuddyInfo',
+        component: () => import('@/views/chat/BuddyInfo.vue'),
+        meta: {
+            title: '好友详情'
+        }
+    },
+    {
+        path: '/roomInfo',
+        name: 'roomInfo',
+        component: () => import('@/views/chat/RoomInfo.vue'),
+        meta: {
+            title: '群详情'
+        }
+    },
+
+    {
+        path: '/profile',
+        name: 'Profile',
+        component: () => import('@/views/profile/Profile.vue'),
+        meta: {
+            title: '我的主页'
+        }
+    },
+    {
+        path: '/roomProfile',
+        name: 'RoomProfile',
+        component: () => import('@/views/profile/RoomProfile.vue'),
+        meta: {
+            title: '群资料'
+        }
+    },
+    {
+        path: '/UserProfile',
+        name: 'userProfile',
+        component: () => import('@/views/profile/UserProfile.vue'),
+        meta: {
+            title: '人员资料'
+        }
+    },
+    {
+        path: '/addApply',
+        name: 'AddApply',
+        component: () => import('@/views/search/AddApply.vue'),
+        meta: {
+            title: '添加申请'
+        }
+    },
+    {
+        path: '/search',
+        name: 'Search',
+        component: () => import('@/views/search/Search.vue'),
+        meta: {
+            title: '查找好友'
+        }
+    },
+    {
+        path: '/roomNotice',
+        name: 'RoomNotice',
+        component: () => import('@/views/notice/RoomNotice.vue'),
+        meta: {
+            title: '群通知'
+        }
+    },
+    {
+        path: '/newBuddyNotice',
+        name: 'NewBuddyNotice',
+        component: () => import('@/views/notice/NewBuddyNotice.vue'),
+        meta: {
+            title: '新朋友'
+        }
+    },
+    {
         path: '/login',
         name: 'Login',
         component: () => import('@/views/login/login.vue'),

@@ -2,9 +2,10 @@
 
 import ActionBar from "@/components/ActionBar.vue";
 import {Captcha, Card, FooterToolbar, Image, Password, UserName} from "view-ui-plus";
-import {reactive, ref} from "vue";
+import {reactive, ref, getCurrentInstance} from "vue";
 import {useRouter} from "vue-router";
 let router = useRouter();
+let instance = getCurrentInstance();
 
 const fromData = reactive({
   username: '',
@@ -15,9 +16,10 @@ const fromData = reactive({
 const mode = ref(false) // 登录模式 true 密码，false 验证码
 
 function handleSubmit(valid:any, data: any) {
-  if (!mode) {
+  if (!mode.value) {
     if (data.captcha.length != 6) {
       // TODO 提示
+      instance?.proxy?.$Message.info("验证码不正确")
       return
     }
   }
