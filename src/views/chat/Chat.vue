@@ -2,9 +2,9 @@
 
 import ActionBar from "@/components/ActionBar.vue";
 import {useAppStore} from "@/stores/app.ts";
-import {Button, Drawer, FooterToolbar, Icon, Scroll, Upload} from "view-ui-plus";
+import {Button, Drawer, FooterToolbar, Icon, List, ListItem, ListItemMeta, Scroll, Tag, Upload} from "view-ui-plus";
 import ChatItem from "@/components/chat/ChatItem.vue";
-import {ref, onMounted, getCurrentInstance} from "vue";
+import {ref, onMounted, getCurrentInstance, watchEffect, watch} from "vue";
 import router from "@/router";
 import MemberItem from "@/components/chat/MemberItem.vue";
 
@@ -18,10 +18,30 @@ const scrollRef = ref<HTMLElement | null>(null)
 
 const isTool = ref(false)
 const selectMember = ref(false)
+const text = ref('')
 
 function callBarAction(i:number | null) {
-  // router.push('roomProfile')
-  selectMember.value = true
+  router.push('roomInfo')
+}
+
+// watch(text, (value, oldValue, onCleanup) => {
+//   // console.log(value,oldValue)
+//   // console.log(onCleanup)
+// })
+
+function onInput(e: any) {
+  // console.log('input',e.inputType)
+  // console.log('input',e.target.value)
+
+  if (e.data === '@') {
+    let inputType = e.inputType;
+    if (inputType != 'deleteContentBackward') { // 退格时不管@
+      selectMember.value = true
+      let value = e.target.value;
+      let newStr = value.slice(0, -1);
+      text.value = newStr+'  @ABCS  '
+    }
+  }
 }
 function callFocus() {
   isTool.value = false
@@ -62,8 +82,8 @@ function callSend() {
       </div>
       <div class="flex-sub ivu-m-4">
 
-        <Input type="textarea" :autofocus="true" size="large" suffix="md-add"  :autosize="{minRows: 1}"
-        @on-enter="callSend" @on-focus="callFocus"
+        <Input type="textarea"  v-model="text" :autofocus="true" size="large" suffix="md-add"  :autosize="{minRows: 1}"
+        @input="onInput" @on-enter="callSend" @on-focus="callFocus"
         />
       </div>
       <div class="flex align-center ivu-m-4">
@@ -79,14 +99,28 @@ function callSend() {
   </div>
 
   <Drawer title="选择成员" placement="bottom" height="350" :closable="false" v-model="selectMember">
-    <MemberItem />
-    <MemberItem />
-    <MemberItem />
-    <MemberItem />
-    <MemberItem />
-    <MemberItem />
-    <MemberItem />
-    <MemberItem />
+    <List item-layout="vertical">
+
+      <ListItemMeta avatar="https://i.loli.net/2017/08/21/599a521472424.jpg" title="hjkfha" >
+        <template #description>
+          <Tag color="red">d</Tag>
+          <Tag color="volcano">d</Tag>
+          <Tag color="orange">d</Tag>
+        </template>
+      </ListItemMeta>
+      <ListItemMeta avatar="https://i.loli.net/2017/08/21/599a521472424.jpg" title="hjkfha"></ListItemMeta>
+      <ListItemMeta avatar="https://i.loli.net/2017/08/21/599a521472424.jpg" title="hjkfha"></ListItemMeta>
+      <ListItemMeta avatar="https://i.loli.net/2017/08/21/599a521472424.jpg" title="hjkfha"></ListItemMeta>
+      <ListItemMeta avatar="https://i.loli.net/2017/08/21/599a521472424.jpg" title="hjkfha"></ListItemMeta>
+      <ListItemMeta avatar="https://i.loli.net/2017/08/21/599a521472424.jpg" title="hjkfha"></ListItemMeta>
+      <ListItemMeta avatar="https://i.loli.net/2017/08/21/599a521472424.jpg" title="hjkfha"></ListItemMeta>
+      <ListItemMeta avatar="https://i.loli.net/2017/08/21/599a521472424.jpg" title="hjkfha"></ListItemMeta>
+      <ListItemMeta avatar="https://i.loli.net/2017/08/21/599a521472424.jpg" title="hjkfha"></ListItemMeta>
+      <ListItemMeta avatar="https://i.loli.net/2017/08/21/599a521472424.jpg" title="hjkfha"></ListItemMeta>
+      <ListItemMeta avatar="https://i.loli.net/2017/08/21/599a521472424.jpg" title="hjkfha"></ListItemMeta>
+      <ListItemMeta avatar="https://i.loli.net/2017/08/21/599a521472424.jpg" title="hjkfha"></ListItemMeta>
+      <ListItemMeta avatar="https://i.loli.net/2017/08/21/599a521472424.jpg" title="hjkfha"></ListItemMeta>
+    </List>
   </Drawer>
 </template>
 

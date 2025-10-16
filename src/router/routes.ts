@@ -121,6 +121,14 @@ const frameOut : RouteRecordRaw[] = [
         }
     },
     {
+        path: '/memberList',
+        name: 'MemberList',
+        component: () => import('@/views/profile/MemberList.vue'),
+        meta: {
+            title: '群成员'
+        }
+    },
+    {
         path: '/roomProfile',
         name: 'RoomProfile',
         component: () => import('@/views/profile/RoomProfile.vue'),
