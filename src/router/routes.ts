@@ -116,6 +116,15 @@ const frameIn : RouteRecordRaw[] = [
         }
     },
     {
+        path: '/groupMember',
+        name: 'GroupMember',
+        component: () => import('@/views/group/GroupMember.vue'),
+        meta: {
+            title: '群成员',
+            auth: true
+        }
+    },
+    {
         path: '/setting',
         name: 'Setting',
         component: () => import('@/views/settings/Settings.vue'),

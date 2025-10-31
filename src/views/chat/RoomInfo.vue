@@ -7,10 +7,21 @@ import MemberGridItem from "@/components/chat/MemberGridItem.vue";
 import {useAppStore} from "@/stores/app.ts";
 import {useRouter,useRoute} from "vue-router";
 import {getCurrentInstance, onMounted, reactive, ref} from "vue";
-import {IMIOClient,IMIOContactManager,IMIOContact,IMIOChatManager,IMIOMessage,IMIOGroupManager,IMIOMember} from 'imio-sdk-lite'
+import {
+  IMIOClient,
+  IMIOContactManager,
+  IMIOContact,
+  IMIOChatManager,
+  IMIOMessage,
+  IMIOGroupManager,
+  IMIOMember,
+  IMIOGroup
+} from 'imio-sdk-lite'
+import {useUserStore} from "@/stores/user.ts";
 let instance = getCurrentInstance();
 let imioClient = IMIOClient.getInstance();
 let appStore = useAppStore();
+let userStore = useUserStore();
 let router = useRouter();
 let route = useRoute();
 
@@ -20,8 +31,9 @@ let imioContact : IMIOContact | null = null
 let joinId: string = '';
 let page = 1;
 const listDate = reactive<Array<IMIOMember>>([])
-const title = ref('')
-const avatar = ref('')
+let group = reactive<IMIOGroup>({})
+let member = reactive<IMIOMember>({})
+const remarkName = ref('');
 
 onMounted(() => {
    joinId = route.query.join as string;
@@ -34,8 +46,8 @@ onMounted(() => {
     router.back()
     return
   }
-  title.value = imioContact.nickname;
-  avatar.value = imioContact.avatar;
+  remarkName.value = imioContact.username;
+  Object.assign(group,imioContact)
   getMember()
 })
 
@@ -47,10 +59,36 @@ function getMember() {
         if (index == -1) {
           listDate.push(item)
         }
+        if (userStore.user && userStore.user!!.id) {
+          if (userStore.user!!.id == item.userId) {
+            Object.assign(member, item)
+          }
+        }
       }
     }
   }).catch(err => {
     instance?.proxy?.$Message.error("成员获取失败")
+  })
+}
+
+function goToNav(i:number) {
+  if (i == 1) {
+    router.push({
+      name:"GroupMember",
+      query:{
+        join:joinId
+      }
+    })
+  }
+}
+
+function handleSignOut() {
+  groupManager.exit(Number(joinId)).then(res => {
+    instance?.proxy?.$Message.info("退出成功");
+    router.replace("/")
+
+  }).catch(err => {
+    instance?.proxy?.$Message.error("退出失败")
   })
 }
 </script>
@@ -58,7 +96,7 @@ function getMember() {
 <template>
   <ActionBar title="群详情"/>
   <div class="page-body">
-    <AvatarCard class="ivu-m" :avatar="avatar" :title="title"/>
+    <AvatarCard class="ivu-m" :avatar="group.avatar" :title="group.groupName"/>
 
     <Scroll :height="Number(appStore.windowMedia.innerHeight) - 150">
     <Card class="ivu-m" :bordered="false" :dis-hover="true" shadow>
@@ -67,23 +105,14 @@ function getMember() {
         群聊成员
       </template>
       <template #extra>
+        <div @click="goToNav(1)">
         查看更多成员
         <Icon type="ios-film-outline"></Icon>
+      </div>
       </template>
 
       <div class="flex flex-wrap">
-        <MemberGridItem/>
-        <MemberGridItem/>
-        <MemberGridItem/>
-        <MemberGridItem/>
-        <MemberGridItem/>
-        <MemberGridItem/>
-        <MemberGridItem/>
-        <MemberGridItem/>
-        <MemberGridItem/>
-        <MemberGridItem/>
-        <MemberGridItem/>
-        <MemberGridItem/>
+        <MemberGridItem v-for="(item,i) in listDate" :avatar="item.avatar" :name="item.nickname"/>
       </div>
     </Card>
 
@@ -95,11 +124,11 @@ function getMember() {
 
 
       <CellGroup>
-        <Cell title="群名称" extra="details"/>
-        <Cell title="群编号" extra="details"/>
+        <Cell title="群名称" :extra="group.groupName"/>
+        <Cell title="群编号" :extra="group.groupNumber"/>
         <Cell title="群公告" extra="details" label="detailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetails detailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetailsdetails"/>
-        <Cell title="我本群昵称" extra="details"/>
-        <Cell title="群聊备注" extra="details"/>
+        <Cell title="我本群昵称" :extra="member.nickname"/>
+        <Cell title="群聊备注" :extra="remarkName"/>
 
       </CellGroup>
 
@@ -128,7 +157,7 @@ function getMember() {
 
     </Scroll>
     <FooterToolbar >
-      <Button type="delete" long>退出群聊</Button>
+      <Button type="delete" long @click="handleSignOut">退出群聊</Button>
 
     </FooterToolbar>
   </div>
