@@ -1,46 +1,129 @@
 import type { RouteRecordRaw } from 'vue-router'
 
-const routes: RouteRecordRaw[] = [
-    {
-        path: '/',
-        name: 'Home',
-        component: () => import('@/views/Index.vue'),
-        meta: {
-            title: '首页'
-        },
-    },
-    {
-        path: '/demo',
-        name: 'Demo',
-        component: () => import('@/components/Demo'),
-        meta: {
-            title: '演示页面'
-        }
-    },
-    {
-        path: '/user',
-        name: 'UserManagement',
-        component: () => import('@/views/UserManagement.vue'),
-        meta: {
-            title: '用户管理'
-        }
-    },
-    {
-        path: '/settings',
-        name: 'AppSettings',
-        component: () => import('@/views/AppSettings.vue'),
-        meta: {
-            title: '应用设置'
-        }
-    }
-]
 
 /**
  * 在主框架内显示
  */
 
 const frameIn : RouteRecordRaw[] = [
+    {
+        path: '/chat',
+        name: 'Chat',
+        component: () => import('@/views/chat/Chat.vue'),
+        meta: {
+            title: '对话',
+            auth: true
+        }
+    },
+    {
+        path: '/buddyInfo',
+        name: 'BuddyInfo',
+        component: () => import('@/views/chat/BuddyInfo.vue'),
+        meta: {
+            title: '好友详情',
+            auth: true
+        }
+    },
+    {
+        path: '/roomInfo',
+        name: 'roomInfo',
+        component: () => import('@/views/chat/RoomInfo.vue'),
+        meta: {
+            title: '群详情',
+            auth: true
+        }
+    },
 
+    {
+        path: '/profile',
+        name: 'Profile',
+        component: () => import('@/views/profile/Profile.vue'),
+        meta: {
+            title: '我的主页',
+            auth: true
+        }
+    },
+    {
+        path: '/memberList',
+        name: 'MemberList',
+        component: () => import('@/views/profile/MemberList.vue'),
+        meta: {
+            title: '群成员',
+            auth: true
+        }
+    },
+    {
+        path: '/roomProfile',
+        name: 'RoomProfile',
+        component: () => import('@/views/profile/RoomProfile.vue'),
+        meta: {
+            title: '群资料',
+            auth: true
+        }
+    },
+    {
+        path: '/UserProfile',
+        name: 'userProfile',
+        component: () => import('@/views/profile/UserProfile.vue'),
+        meta: {
+            title: '人员资料',
+            auth: true
+        }
+    },
+    {
+        path: '/addApply',
+        name: 'AddApply',
+        component: () => import('@/views/search/AddApply.vue'),
+        meta: {
+            title: '添加申请',
+            auth: true
+        }
+    },
+    {
+        path: '/search',
+        name: 'Search',
+        component: () => import('@/views/search/Search.vue'),
+        meta: {
+            title: '查找好友',
+            auth: true
+        }
+    },
+    {
+        path: '/roomNotice',
+        name: 'RoomNotice',
+        component: () => import('@/views/notice/RoomNotice.vue'),
+        meta: {
+            title: '群通知',
+            auth: true
+        }
+    },
+    {
+        path: '/newBuddyNotice',
+        name: 'NewBuddyNotice',
+        component: () => import('@/views/notice/NewBuddyNotice.vue'),
+        meta: {
+            title: '新朋友',
+            auth: true
+        }
+    },
+    {
+        path: '/createGroup',
+        name: 'CreateGroup',
+        component: () => import('@/views/group/CreateGroup.vue'),
+        meta: {
+            title: '创建群聊',
+            auth: true
+        }
+    },
+    {
+        path: '/setting',
+        name: 'Setting',
+        component: () => import('@/views/settings/Settings.vue'),
+        meta: {
+            title: '设置',
+            auth: true
+        }
+    },
 ];
 
 /**
@@ -66,7 +149,8 @@ const frameOut : RouteRecordRaw[] = [
                 name: 'Dialog',
                 component: () => import('@/views/home/Dialog.vue'),
                 meta: {
-                    title: '对话'
+                    title: '对话',
+                    auth:true
                 }
             },
             {
@@ -74,7 +158,8 @@ const frameOut : RouteRecordRaw[] = [
                 name: 'Contact',
                 component: () => import('@/views/home/Contact.vue'),
                 meta: {
-                    title: '联系人'
+                    title: '联系人',
+                    auth:true
                 }
             },
             {
@@ -82,100 +167,13 @@ const frameOut : RouteRecordRaw[] = [
                 name: 'Me',
                 component: () => import('@/views/home/Me.vue'),
                 meta: {
-                    title: '我'
+                    title: '我',
+                    auth:true
                 }
             },
         ]
     },
-    {
-        path: '/chat',
-        name: 'Chat',
-        component: () => import('@/views/chat/Chat.vue'),
-        meta: {
-            title: '对话'
-        }
-    },
-    {
-        path: '/buddyInfo',
-        name: 'BuddyInfo',
-        component: () => import('@/views/chat/BuddyInfo.vue'),
-        meta: {
-            title: '好友详情'
-        }
-    },
-    {
-        path: '/roomInfo',
-        name: 'roomInfo',
-        component: () => import('@/views/chat/RoomInfo.vue'),
-        meta: {
-            title: '群详情'
-        }
-    },
 
-    {
-        path: '/profile',
-        name: 'Profile',
-        component: () => import('@/views/profile/Profile.vue'),
-        meta: {
-            title: '我的主页'
-        }
-    },
-    {
-        path: '/memberList',
-        name: 'MemberList',
-        component: () => import('@/views/profile/MemberList.vue'),
-        meta: {
-            title: '群成员'
-        }
-    },
-    {
-        path: '/roomProfile',
-        name: 'RoomProfile',
-        component: () => import('@/views/profile/RoomProfile.vue'),
-        meta: {
-            title: '群资料'
-        }
-    },
-    {
-        path: '/UserProfile',
-        name: 'userProfile',
-        component: () => import('@/views/profile/UserProfile.vue'),
-        meta: {
-            title: '人员资料'
-        }
-    },
-    {
-        path: '/addApply',
-        name: 'AddApply',
-        component: () => import('@/views/search/AddApply.vue'),
-        meta: {
-            title: '添加申请'
-        }
-    },
-    {
-        path: '/search',
-        name: 'Search',
-        component: () => import('@/views/search/Search.vue'),
-        meta: {
-            title: '查找好友'
-        }
-    },
-    {
-        path: '/roomNotice',
-        name: 'RoomNotice',
-        component: () => import('@/views/notice/RoomNotice.vue'),
-        meta: {
-            title: '群通知'
-        }
-    },
-    {
-        path: '/newBuddyNotice',
-        name: 'NewBuddyNotice',
-        component: () => import('@/views/notice/NewBuddyNotice.vue'),
-        meta: {
-            title: '新朋友'
-        }
-    },
     {
         path: '/login',
         name: 'Login',

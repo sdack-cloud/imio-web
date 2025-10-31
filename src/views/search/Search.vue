@@ -4,21 +4,56 @@ import ActionBar from "@/components/ActionBar.vue";
 import {ButtonGroup, Scroll} from "view-ui-plus";
 import {useRouter} from "vue-router";
 import {useAppStore} from "@/stores/app.ts";
-import {ref} from "vue";
+import {getCurrentInstance, reactive, ref} from "vue";
 import SearchItem from "@/components/search/SearchItem.vue";
+import {IMIOClient,IMIOContactManager,IMIOContact,IMIOGroupManager,IMIOGroup} from 'imio-sdk-lite'
+import { data } from "autoprefixer";
+import {useUserStore} from "@/stores/user.ts";
 
 let router = useRouter();
 let appStore = useAppStore();
+let instance = getCurrentInstance();
+let userStore = useUserStore();
+let imioClient = IMIOClient.getInstance();
+let groupManager = IMIOGroupManager.getInstance().setIMIOClient(imioClient);
 
 const mode = ref(true) // true 房间，false 人员
-
-
-function callAdd(i: number | null) {
-  router.push('AddApply')
+const text = ref("");
+const listData = reactive<Array<IMIOGroup>>([]);
+let page = 0
+function callAdd(data:any) {
+  if (data.isApproval || data.ask.length) {
+    userStore.groupObj = JSON.stringify(data)
+    router.push({
+      name: 'AddApply',
+      query: {
+        gid: data.groupId
+      },
+    })
+  }
 }
-function callJumpInfo() {
+function callJumpInfo(i:number) {
   router.push('RoomProfile')
+}
+function handleSearch() {
+  page = 1;
+  listData.splice(0);
+  if (!text.value.length) {
+    instance?.proxy?.$Message.error('请输入');
+    return;
+  }
+  groupManager.search(mode.value?2:1,text.value,page).then((res:Array<IMIOGroup>) => {
+    if (!res.length) {
+      instance?.proxy?.$Message.success('没有结果');
+      return
+    }
+    for (let item of res) {
+      listData.push(item)
+    }
 
+  }).catch(err => {
+    instance?.proxy?.$Message.error('请求失败');
+  })
 }
 </script>
 
@@ -31,11 +66,11 @@ function callJumpInfo() {
         <Button :type="mode?'':'primary'" @click="mode = false">找人</Button>
       </ButtonGroup>
       <div class="ivu-m-8 ivu-ml-16 ivu-mr-16 search" >
-        <Input search enter-button placeholder="Enter something..."/>
+        <Input v-model="text" search enter-button placeholder="Enter something..." @on-search="handleSearch"/>
       </div>
     </div>
     <Scroll :height="(Number(appStore.windowMedia.innerHeight) - 150)">
-      <SearchItem @add="callAdd" @click="callJumpInfo"/>
+      <SearchItem @add="callAdd" @click="callJumpInfo(index)" :data="item" v-for="(item,index) in listData" />
     </Scroll>
   </div>
 </template>

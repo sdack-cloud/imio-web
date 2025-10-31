@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
 export interface User {
-  id: number
+  id: string
   name: string
   email: string
   avatar?: string
@@ -17,32 +17,11 @@ export const useUserStore = defineStore('user', () => {
   // 计算属性
   const userName = computed(() => user.value?.name || '未登录')
   const userEmail = computed(() => user.value?.email || '')
-  const userAvatar = computed(() => user.value?.avatar || '')
+  const userAvatar = computed(() => user.value?.avatar || 'https://i.loli.net/2017/08/21/599a521472424.jpg')
+
+  const groupObj = ""; // 请求好友传参
 
   // 动作
-  const login = async (email: string, password: string) => {
-    loading.value = true
-    try {
-      // 模拟API调用
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // 模拟登录成功
-      user.value = {
-        id: 1,
-        name: '张三',
-        email: email,
-        avatar: 'https://via.placeholder.com/100x100'
-      }
-      isLoggedIn.value = true
-      
-      return { success: true, message: '登录成功' }
-    } catch (error) {
-      return { success: false, message: '登录失败' }
-    } finally {
-      loading.value = false
-    }
-  }
-
   const logout = () => {
     user.value = null
     isLoggedIn.value = false
@@ -51,6 +30,12 @@ export const useUserStore = defineStore('user', () => {
   const updateProfile = (profileData: Partial<User>) => {
     if (user.value) {
       user.value = { ...user.value, ...profileData }
+    }
+  }
+
+  const clearProfile = () => {
+    if (user.value) {
+      user.value = { id:'',name:"",email:'',avatar:'' }
     }
   }
 
@@ -63,9 +48,11 @@ export const useUserStore = defineStore('user', () => {
     userName,
     userEmail,
     userAvatar,
+
+    groupObj,
     // 动作
-    login,
     logout,
-    updateProfile
+    updateProfile,
+    clearProfile
   }
 })

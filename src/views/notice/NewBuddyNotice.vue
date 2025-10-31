@@ -2,22 +2,80 @@
 
 import ActionBar from "@/components/ActionBar.vue";
 import AvatarCard from "@/components/profile/AvatarCard.vue";
-import {getCurrentInstance, ref} from "vue";
+import {getCurrentInstance, onMounted, reactive, ref} from "vue";
 import {Input} from "view-ui-plus";
+import {
+  IMIOClient,
+  IMIOContactManager,
+  IMIOContact,
+  IMIOMessage,
+  IMIOUserInfoManager,
+  IMIOMessageLabel
+} from 'imio-sdk-lite'
+
 let instance = getCurrentInstance();
+let imioClient = IMIOClient.getInstance();
+let imioContactManager = IMIOContactManager.getInstance().setIMIOClient(imioClient);
+let userInfoManager = IMIOUserInfoManager.getInstance().setIMIOClient(imioClient);
 
 const descMessage = ref("") // 操作回复信息
+const listData = reactive<Array<IMIOMessage>>([]);
 
-function callAction() {
+onMounted(() => {
+  getMyNotice()
+})
 
+
+
+function getMyNotice() {
+  userInfoManager.getNoticeMessage(IMIOMessageLabel.notice,1,300).then((res:Array<IMIOMessage>) => {
+    if (res.length) {
+      for (let item of res) {
+        if (item.label == IMIOMessageLabel.action) {
+          let index = listData.findIndex(it => it.messageId == item.messageId);
+          if (index == -1) {
+            listData.push(item)
+          }
+        }
+      }
+    } else {
+      instance?.proxy?.$Message.success("没有通知")
+    }
+  }).catch(err => {
+    instance?.proxy?.$Message.error("查询失败")
+  })
+}
+
+function handelApply(index: number,isOK: boolean) {
+  let listItem = listData[index];
+  if (!listItem) {
+    return;
+  }
+  imioContactManager.handleApply(listItem.messageId,isOK,descMessage.value).then(res => {
+    instance?.proxy?.$Message.success("操作成功");
+    listData.splice(index,1);
+  }).catch(err => {
+    instance?.proxy?.$Message.error("操作失败")
+  })
+}
+
+function callAction(index: number) {
+  let listItem = listData[index];
+  if (!listItem) {
+    return;
+  }
   instance?.proxy?.$Modal.confirm({
     draggable:true,
     title:'回复',
+    cancelText:"拒绝",
+    okText:"同意",
     onOk: () => {
-      console.log('OK')
+      console.log('OK');
+      handelApply(index,true)
     },
     onCancel: () => {
       console.log('Cancel')
+      handelApply(index,false)
     },
     render: (h:any) => {
       return h( Input, {
@@ -38,7 +96,7 @@ function callAction() {
 <template>
   <ActionBar title="新朋友"/>
   <div>
-    <AvatarCard class="ivu-m" @action="callAction" action-name="操作"/>
+    <AvatarCard class="ivu-m" @action="callAction(index)" action-name="操作" v-for="(item,index) in listData" :avatar="item.thumb" :title="item.title" :subtitle="item.text" />
   </div>
 </template>
 

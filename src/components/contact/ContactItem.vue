@@ -27,11 +27,11 @@ function callItem(item: Contact) {
 </script>
 
 <template>
-  <Card shadow class="contact-item" @click="emits('jumpItem',{})">
+  <Card shadow class="contact-item" @click="emits('jumpItem',contact)">
     <div class="flex align-center">
-      <Avatar size="large" src="https://i.loli.net/2017/08/21/599a521472424.jpg" />
+      <Avatar size="large" :src="contact.avatar" />
       <div class="item-content">
-        <Text strong >订单</Text>
+        <Text strong >{{ contact.username.length?contact.username:contact.nickname }}</Text>
       </div>
     </div>
   </Card>

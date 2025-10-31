@@ -1,14 +1,50 @@
 <script setup lang="ts">
 
-import {Avatar, AvatarList, Card, Icon, Poptip, Text} from "view-ui-plus";
+import {Avatar, AvatarList, Card, Icon, Poptip, Text,Time} from "view-ui-plus";
 import {reactive} from "vue";
+import {IMIOClient,IMIOContact,IMIOMessage,IMIOMessageSender} from 'imio-sdk-lite';
+import {useUserStore} from "@/stores/user.ts";
+const userStore = useUserStore();
+
+interface Msg {
+  messageId: string;
+  joinId: number;
+  fromId: string;
+  fromName: string;
+  destId: string;
+  destName: string;
+  cite: string;
+  type: string;
+  title: string;
+  subtitle: string;
+  text: string;
+  secret: string;
+  thumb: string;
+  host: string;
+  url: string;
+  lng: string;
+  lat: string;
+  size: number;
+  length: number;
+  label: string;
+  tag: string;
+  sent: string;
+  revoke: boolean;
+  talk: number;
+  citeData: Msg | null;
+  sentDate: Date | null;
+}
+
+
 
 const emits = defineEmits(['callAvatar'])
 
 const props = withDefaults(defineProps<{
   mode: boolean, // 模式
+  msg : Msg | null
 }>(), {
   mode:true,
+  msg:  null
 })
 
 const excessStyle = reactive({
@@ -48,28 +84,53 @@ const avatarList = reactive([
     <div class="flex" :class="props.mode?'':'flex-reverse-row'">
 
       <div class="chat-head">
-        <Avatar size="large" src="https://i.loli.net/2017/08/21/599a521472424.jpg" @click="emits('callAvatar',0)" width="15" hidden="15"/>
+        <Avatar size="large" :src="props.mode?msg?.thumb:userStore.userAvatar" @click="emits('callAvatar',msg)" width="15" height="15"/>
       </div>
 
       <div class="item-content flex-sub flex flex-direction " :class="props.mode?'align-start':'align-end'">
         <div class="flex align-center justify-start" :class="props.mode?'':'flex-reverse-row'">
-          <Text class="chat-title">昵称</Text>
-          <Text class="chat-time">20:21</Text>
+          <Text class="chat-title">{{ props.mode ? msg?.fromName : msg?.destName }}</Text>
+          <Time class="chat-time" :time="msg?.sentDate" v-if="msg?.sentDate && msg?.sentDate"/>
         </div>
         <div class="chat-content flex " :class="props.mode?'justify-start':'justify-end'">
-          <Poptip width="200">
+          <Poptip word-wrap width="200">
             <Text class="chat-text">
-
-              昵称非典事件复读机啊十分健康撒防护服极客飒好放假看到回复就撒返回就开始放假康师傅哈萨克覅哦呜佛阖家快乐收到回复暗示法尽快回复见客户撒东风街道啊
-
-
+              {{ msg?.text }}
             </Text>
+            <template #content>
+              <div class="flex flex-wrap align-center">
+                <div class="ivu-p-8 flex flex-direction align-center">
+                  <div>
+                    <Icon type="md-document" size="20"/>
+                  </div>
+                  <div class="ivu-mt-4">复制</div>
+                </div>
+                <div class="ivu-p-8 flex flex-direction align-center">
+                  <div>
+                    <Icon type="md-quote" size="20"/>
+                  </div>
+                  <div class="ivu-mt-4">引用</div>
+                </div>
+                <div class="ivu-p-8 flex flex-direction align-center">
+                  <div>
+                    <Icon type="md-at" size="20"/>
+                  </div>
+                  <div class="ivu-mt-4">at</div>
+                </div>
+                <div class="ivu-p-8 flex flex-direction align-center">
+                  <div>
+                    <Icon type="md-undo" size="20"/>
+                  </div>
+                  <div class="ivu-mt-4">撤销</div>
+                </div>
+
+              </div>
+            </template>
           </Poptip>
         </div>
-        <div class="chat-sub">
+        <div class="chat-sub" v-show="msg?.citeData">
           <Text class="chat-text-sub">
-
-            昵称非典
+            {{msg?.citeData?msg?.citeData.text:''}}
           </Text>
         </div>
         <div class="chat-avatar">
@@ -77,7 +138,7 @@ const avatarList = reactive([
         </div>
       </div>
 
-      <div class="flex flex-direction justify-center">
+      <div class="flex flex-direction justify-center" v-show="false">
         <Icon type="md-refresh" size="23" color="#ed4014"/>
         <Icon type="md-radio-button-off" size="23" color="#2d8cf0"/>
       </div>
@@ -113,7 +174,6 @@ const avatarList = reactive([
 
 .chat-content {
   margin-top: 5px;
-  width: 100%;
   padding: 10px;
   background: #ffffff;
   border-radius: 10px;

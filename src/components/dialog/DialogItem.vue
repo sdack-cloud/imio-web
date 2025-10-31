@@ -3,15 +3,18 @@
 import {Avatar, Badge, Card, Space, Text} from "view-ui-plus";
 import {useRouter} from "vue-router";
 import Contact from "@/views/home/Contact.vue";
+import {data} from "autoprefixer";
 
 let router = useRouter();
 
 interface Dialog {
-  roomId: number,
+  joinId: number,
   avatar: string,
-  nickname: string,
+  name: string,
   username: string,
   remark: string,
+  date:Date,
+  tip:number,
 }
 
 const emits = defineEmits(['jumpItem']);
@@ -28,16 +31,16 @@ function callItem(item: Dialog) {
 </script>
 
 <template>
-  <Card shadow class="contact-item" @click="emits('jumpItem',{})">
+  <Card shadow class="contact-item" @click="emits('jumpItem',data)">
     <div class="flex align-center justify-between">
-      <Avatar size="large" src="https://i.loli.net/2017/08/21/599a521472424.jpg" />
+      <Avatar size="large" :src="dialog.avatar" />
       <div class="item-content flex flex-direction align-start">
-        <Text strong class="title" ellipsis >订单</Text>
-        <Text class="subtitle" ellipsis>订单分阶段来看京东方龙卷风考虑房间的付款了分开了叫开放接口睡觉啊困了</Text>
+        <Text strong class="title" ellipsis >{{ dialog.name }}</Text>
+        <Text class="subtitle" ellipsis>{{ dialog.remark }}</Text>
       </div>
       <div class="flex flex-direction justify-around">
-        <div class="more-dot">
-          <Badge :count="10" />
+        <div class="more-dot" v-show="dialog.tip">
+          <Badge :count="dialog.tip" />
         </div>
         <div class="more-time">
           <Time :time="new Date()" />

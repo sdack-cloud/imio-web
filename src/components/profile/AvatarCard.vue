@@ -20,14 +20,14 @@ const props = withDefaults(defineProps<{
 <template>
   <div class="flex avatar-card align-center ivu-p-8">
     <div>
-      <Avatar size="large" src="https://i.loli.net/2017/08/21/599a521472424.jpg" />
+      <Avatar size="large" :src="avatar" />
     </div>
     <div class="flex-sub ivu-ml-8">
       <div class="title">
-        <Text strong>昵称</Text>
+        <Text strong> {{ title }}</Text>
       </div>
       <div class="subtitle">
-        <Text>昵称</Text>
+        <Text> {{subtitle}}</Text>
       </div>
     </div>
     <div class="flex align-center ivu-mr-8" v-if="actionName" >

@@ -4,10 +4,13 @@ import ActionBar from "@/components/ActionBar.vue";
 import {useAppStore} from "@/stores/app.ts";
 import {Button, Drawer, FooterToolbar, Icon, List, ListItem, ListItemMeta, Scroll, Tag, Upload} from "view-ui-plus";
 import ChatItem from "@/components/chat/ChatItem.vue";
-import {ref, onMounted, getCurrentInstance, watchEffect, watch} from "vue";
-import router from "@/router";
+import {ref, onMounted, getCurrentInstance, watchEffect, watch, reactive, nextTick} from "vue";
+import {useRouter,useRoute} from "vue-router";
 import MemberItem from "@/components/chat/MemberItem.vue";
+import {IMIOClient,IMIOContactManager,IMIOContact,IMIOChatManager,IMIOMessage,IMIOMessageSender} from 'imio-sdk-lite'
 
+let router = useRouter();
+let route = useRoute();
 let appStore = useAppStore();
 let instance = getCurrentInstance();
 
@@ -19,15 +22,103 @@ const scrollRef = ref<HTMLElement | null>(null)
 const isTool = ref(false)
 const selectMember = ref(false)
 const text = ref('')
+const name = ref("")
+let joinId : string = '';
+let page = 0;
+const listData = reactive<Array<IMIOMessage>>([])
+let imioClient = IMIOClient.getInstance();
+let chatManager = IMIOChatManager.getInstance().setIMIOClient(imioClient);
+let contactList = imioClient.contactList;
+let imioContact: IMIOContact|null = null;
+let userId = ''
+
+
+const messageListener = {
+  onMessage(message: IMIOMessage): void {
+    if (message.joinId.toString() == joinId) {
+      listData.push(message);
+      listData.sort((a,b) => a.sentDate.getTime() - b.sentDate.getTime())
+      nextTick(()=> {
+        const height = document.querySelector('.scroll-content .ivu-scroll-content')?.clientHeight;
+        (scrollRef.value as any)?.$refs.scrollContainer.scrollTo(0, height!! + 100);
+      })
+    }
+  }, onMessageRead(contactId: number, messageId: string): void {
+  }, onMessageRevoke(contactId: number, messageId: string): void {
+    let index = listData.findIndex(it => it.messageId == messageId);
+    if (index > -1) {
+      listData.splice(index,1);
+    }
+    listData.sort((a,b) => a.sentDate.getTime() - b.sentDate.getTime())
+    nextTick(()=> {
+      const height = document.querySelector('.scroll-content .ivu-scroll-content')?.clientHeight;
+      (scrollRef.value as any)?.$refs.scrollContainer.scrollTo(0, height!! + 100);
+    })
+  }, onNotice(message: IMIOMessage): void {
+  }
+};
+imioClient.messageListener.push(messageListener);
+onMounted(() => {
+  page = 0;
+  console.warn("Chat onMounted", route.query)
+  name.value  = route.query.name as string;
+  joinId = route.query.join as string;
+  if (!joinId) {
+    router.back();
+    return;
+  }
+  if (imioClient.isClose()) {
+    router.back();
+    return;
+  }
+  let userInfo = imioClient.getUserInfo();
+  if (userInfo) {
+    userId = userInfo.accountId;
+  }
+  imioContact = contactList.find(it => it.joinId == joinId);
+  console.log('Contact =>',imioContact)
+  getMessageList();
+})
 
 function callBarAction(i:number | null) {
-  router.push('roomInfo')
+  if (imioContact) {
+    if (imioContact.isGroup) {
+      router.push('roomInfo')
+    } else {
+      router.push('buddyInfo')
+    }
+  }
 }
 
-// watch(text, (value, oldValue, onCleanup) => {
-//   // console.log(value,oldValue)
-//   // console.log(onCleanup)
-// })
+
+function getMessageList() {
+  if (!joinId.length) {
+    return
+  }
+  page++;
+  chatManager.getMessageList(Number(joinId),page).then((res:Array<IMIOMessage>) => {
+    if (!res.length) {
+      instance?.proxy?.$Message.success('没有任何消息');
+      return
+    }
+    for (let item of res) {
+      let findIndex = listData.findIndex((it:IMIOMessage) => it.messageId == item.messageId);
+      if (findIndex == -1) {
+        listData.push(item)
+      }
+    }
+    listData.sort((a,b) => a.sentDate.getTime() - b.sentDate.getTime());
+
+    nextTick(()=> {
+      const height = document.querySelector('.scroll-content .ivu-scroll-content')?.clientHeight;
+      (scrollRef.value as any)?.$refs.scrollContainer.scrollTo(0, height!! + 100);
+    })
+
+  }).catch((e) => {
+    instance?.proxy?.$Message.error('消息获取失败');
+    console.error(e)
+  })
+}
 
 function onInput(e: any) {
   // console.log('input',e.inputType)
@@ -48,31 +139,41 @@ function callFocus() {
 }
 function callSend() {
   isTool.value = false
-  const height = document.querySelector('.scroll-content .ivu-scroll-content')?.clientHeight;
-  console.log(height);
+  if (!imioContact) {
+    return;
+  }
+  if (!joinId.length) {
+    return
+  }
+  let messageSender = IMIOMessageSender.buildSimpleText(Number(joinId), text.value);
+  if (!imioContact.isGroup) {
+    chatManager.oneToOne(messageSender).then(res => {
+      console.log("发送成功")
+    }).catch(err => {
+      console.warn("发送失败", err)
+    });
+  } else {
+    chatManager.oneToMany(messageSender).then(res => {
+      console.log("发送成功")
+    }).catch(err => {
+      console.warn("发送失败", err)
+    });
+  }
 
-  (scrollRef.value as any)?.$refs.scrollContainer.scrollTo(0, height)
 
 }
 </script>
 
 <template>
-  <ActionBar title="对话" :subtitle="appStore.windowMedia.innerHeight" :isMore="true" @action="callBarAction" />
-  <Upload>
+  <ActionBar :title="name" :subtitle="appStore.windowMedia.innerHeight" :isMore="true" @action="callBarAction" />
+<!--  <Upload>-->
 
   <div class="page-body">
     <Scroll ref="scrollRef" class="scroll-content" :height="Number(appStore.windowMedia.innerHeight) - 120">
-      <ChatItem/>
-      <ChatItem/>
-      <ChatItem/>
-      <ChatItem/>
-      <ChatItem/>
-      <ChatItem/>
-      <ChatItem/>
-      <ChatItem/>
+      <ChatItem  v-for="(item,index) in listData" :msg="item" :mode="userId != item.fromId" :style="[{width:(Number(appStore.windowMedia.innerWidth)-20)+'px'}]" />
     </Scroll>
   </div>
-  </Upload>
+<!--  </Upload>-->
 
   <div class="footer-toolbar flex flex-direction">
 
