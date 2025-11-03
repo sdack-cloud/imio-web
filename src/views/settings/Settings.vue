@@ -41,7 +41,7 @@ function handleLogout() {
 
 
   <FooterToolbar >
-    <Button type="delete" long @click="handleLogout">退出登录</Button>
+    <Button type="error" long @click="handleLogout">退出登录</Button>
 
   </FooterToolbar>
 </template>

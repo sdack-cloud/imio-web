@@ -83,7 +83,12 @@ onMounted(() => {
 function callBarAction(i:number | null) {
   if (imioContact) {
     if (imioContact.isGroup) {
-      router.push('roomInfo')
+      router.push({
+        name:'roomInfo',
+        query:{
+          join:joinId
+        }
+      })
     } else {
       router.push('buddyInfo')
     }

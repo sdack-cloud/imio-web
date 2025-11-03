@@ -32,6 +32,10 @@ function callSetting() {
   router.push("/setting")
 }
 
+function handleTest() {
+
+}
+
 </script>
 
 <template>
@@ -53,7 +57,7 @@ function callSetting() {
        </div>
     </div>
     <div class="flex align-center justify-around ivu-mt-16">
-      <div class="flex flex-direction align-center">
+      <div class="flex flex-direction align-center" @click="handleTest">
         <Icon type="ios-heart" size="36"/>
         <div class="ivu-mt-2">ABC</div>
       </div>

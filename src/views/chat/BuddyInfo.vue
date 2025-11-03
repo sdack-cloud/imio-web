@@ -21,7 +21,7 @@ function barAction() {
   </Scroll>
 
   <FooterToolbar >
-    <Button type="delete" long>删除</Button>
+    <Button type="error" long>删除</Button>
 
   </FooterToolbar>
 
