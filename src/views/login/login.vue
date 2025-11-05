@@ -82,7 +82,7 @@ function handleForgot() {
 
 <template>
   <div>
-    <ActionBar title="登录" :more-list="['A','b']"/>
+    <ActionBar title="登录" />
 
     <div class="demo-login flex justify-center" >
       <Card  class="card ">
@@ -106,8 +106,8 @@ function handleForgot() {
     </Card>
     </div>
   <FooterToolbar>
-    <span @click="handleSignup">注册</span>  |
-    <span @click="handleForgot">忘记密码</span>
+    <Link to="/signup"> 注册 </Link> &nbsp;&nbsp; | &nbsp;&nbsp;
+    <Link to="/forgot"> 忘记密码 </Link>
   </FooterToolbar>
   </div>
 </template>

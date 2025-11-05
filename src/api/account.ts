@@ -20,8 +20,9 @@ export function logout (token:string,type:number = 1) {
 
 export function AccountRegister (data: Record<string, any>) {
     return request({
-        url: '/api/register',
+        url: 'http://39.100.72.181:9000/register/account',
         method: 'post',
+        headers:{'Content-Type':'application/x-www-form-urlencoded'},
         data
     });
 }

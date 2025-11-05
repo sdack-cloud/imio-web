@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import ActionBar from "@/components/ActionBar.vue";
-import {Captcha, Card, Password, Submit, UserName} from "view-ui-plus";
+import {Captcha, Card, FooterToolbar, Password, Submit, UserName} from "view-ui-plus";
 
 
 
@@ -41,6 +41,11 @@ function handleChangePassword() {
   </Card>
     </div>
   </div>
+
+  <FooterToolbar>
+    <Link to="/signup"> 注册 </Link> &nbsp;&nbsp; | &nbsp;&nbsp;
+    <Link to="/login"> 登录 </Link>
+  </FooterToolbar>
 </template>
 
 <style scoped>

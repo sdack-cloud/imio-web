@@ -70,6 +70,9 @@ service.interceptors.response.use(
 
                 return "";
             }
+            // if (url && url!!.indexOf("/register/account") > -1) {
+            //     return dataAxios;
+            // }
             return dataAxios;
         } else {
             // 有 code 代表这是一个后端接口 可以进行进一步的判断
