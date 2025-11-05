@@ -1,23 +1,42 @@
 <script setup lang="ts">
 
 import {Avatar, Button, Tag, Text} from "view-ui-plus";
+
+import {IMIOClient,IMIOContactManager,IMIOContact,IMIOGroupManager,IMIOMember} from 'imio-sdk-lite'
+
+interface MemberObj {
+  joinId: number;
+  userId: string;
+  nickname: string;
+  username: string;
+  avatar: string;
+  role: string;
+}
+
+const props = withDefaults(defineProps<{
+  data : MemberObj | null
+}>(), {
+  data:  null
+})
+
 </script>
 
 <template>
   <div class="flex avatar-card align-center ivu-p-8">
     <div>
-      <Avatar size="large" src="https://i.loli.net/2017/08/21/599a521472424.jpg" />
+      <Avatar size="large" :src="data?.avatar" />
     </div>
     <div class="flex-sub ivu-ml-8">
       <div class="title">
-        <Text strong>昵称</Text>
+        <Text strong>{{ data && data.username.length ? data.username : data.nickname}}</Text>
       </div>
       <div class="subtitle">
-        <Text>昵称</Text>
+        <Text v-if="data?.isMuted">{{ data.isMuted == 1?'已禁言':'' }}</Text>
       </div>
     </div>
     <div class="flex align-center ivu-mr-8"  >
-      <Tag>dfsd</Tag>
+      <Tag color="primary" v-show="data?.role == 'MASTER'">群主</Tag>
+      <Tag color="geekblue" v-show="data?.role == 'MANAGER'">主管</Tag>
     </div>
   </div>
 </template>

@@ -7,6 +7,7 @@ export const useAppStore = defineStore('app', () => {
   const sidebarCollapsed = ref(false)
   const pageTitle = ref('View UI Plus Admin')
   const loading = ref(false)
+  const linkStatus = ref('') // 客户端连接状态
   const windowMedia = reactive({
     innerHeight: '100%',
     innerWidth:'100%'
@@ -38,6 +39,7 @@ export const useAppStore = defineStore('app', () => {
     pageTitle,
     loading,
     windowMedia,
+    linkStatus,
     // 动作
     toggleTheme,
     toggleSidebar,

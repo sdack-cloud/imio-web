@@ -7,7 +7,17 @@ import {useAppStore} from "@/stores/app.ts";
 import {useRouter} from "vue-router";
 
 import {IMIOClient, IMIOContactManager, IMIOContact, IMIOMessage,IMIOMessageLabel,IMIOUserInfoManager} from 'imio-sdk-lite'
-import {onMounted, onActivated, reactive, getCurrentInstance, ref} from "vue";
+import {
+  onMounted,
+  onActivated,
+  reactive,
+  getCurrentInstance,
+  ref,
+  onUnmounted,
+  nextTick,
+  onBeforeMount,
+  onBeforeUnmount
+} from "vue";
 let instance = getCurrentInstance();
 let appStore = useAppStore();
 let router = useRouter();
@@ -21,23 +31,24 @@ const noticeList = reactive<Array<IMIOMessage>>([])
 const noticeCount = ref(0)
 const actionCount = ref(0)
 
-
-function callBarAction(i: number | null) {
-  router.push('search')
-}
-
-onMounted(() => {
-  console.warn("Contact onMounted")
-  if (contactList.length == 0) {
-    getContactList();
-  }
-})
+console.log('setup')
 
 const messageListener = {
   onMessage(message: IMIOMessage): void {
   }, onMessageRead(contactId: number, messageId: string): void {
   }, onMessageRevoke(contactId: number, messageId: string): void {
   }, onNotice(message: IMIOMessage): void {
+    console.log('Contact onNotice',message)
+    if (message.label == IMIOMessageLabel.notice) {
+      nextTick(() => {
+        noticeCount.value = noticeCount.value+1;
+      })
+    }
+    if (message.label == IMIOMessageLabel.action) {
+      nextTick(() => {
+        actionCount.value = actionCount.value+1;
+      })
+    }
   }
 };
 
@@ -51,8 +62,30 @@ const contactListener = {
     }
   }
 };
-imioClient.messageListener.push(messageListener)
-imioClient.contactListener.push(contactListener);
+imioClient.addMessageListener(messageListener)
+imioClient.addContactListener(contactListener);
+function callBarAction(i: number | null) {
+  router.push('search')
+}
+
+onMounted(() => {
+  console.warn("Contact onMounted")
+  if (contactList.length == 0) {
+    getContactList();
+  }
+  let length = imioClient.messageListener.length;
+  console.log('length',length)
+})
+
+onBeforeUnmount(() => {
+  console.log("Contact onBeforeUnmount")
+  imioClient.removeMessageListener(messageListener);
+  imioClient.removeContactListener(contactListener);
+  let length = imioClient.messageListener.length;
+  console.log('length',length)
+})
+
+
 function getContactList() {
   imioContactManager.getContactList().then((res:Array<IMIOContact>) => {
     for (let item of res) {
@@ -90,16 +123,11 @@ function handleReachTop() {
   getContactList();
 }
 
-function toChat(contact: Object) {
+function toChat(contact: any) {
   router.push({
     name:"Chat",
     query:{
       join: contact.joinId,
-      cid: contact.contactId,
-      name: contact.username.length ? contact.username : contact.nickname
-    },
-    params:{
-      cid: contact.id,
       name: contact.username.length ? contact.username : contact.nickname
     }
 
@@ -109,7 +137,7 @@ function toChat(contact: Object) {
 </script>
 
 <template>
-  <ActionBar title="联系人" :isBack="false" :isMore="true" more="md-person-add" @action="callBarAction"/>
+  <ActionBar title="联系人" :subtitle="appStore.linkStatus" :isBack="false" :isMore="true" more="md-person-add" @action="callBarAction"/>
   <div class="page-body">
     <Cell title="新朋友"  to="newBuddyNotice" >
       <template #extra>

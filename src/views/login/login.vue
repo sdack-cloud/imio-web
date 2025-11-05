@@ -16,7 +16,7 @@ const fromData = reactive({
   smscode: '',
 })
 
-const mode = ref(false) // 登录模式 true 密码，false 验证码
+const mode = ref(true) // 登录模式 true 密码，false 验证码
 
 function handleSubmit(valid:any, data: any) {
   if (!mode.value) {

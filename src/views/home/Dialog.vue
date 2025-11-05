@@ -4,27 +4,27 @@ import ActionBar from "@/components/ActionBar.vue";
 import {useAppStore} from "@/stores/app.ts";
 import {Scroll} from "view-ui-plus";
 import DialogItem from "@/components/dialog/DialogItem.vue";
+import {Dialog} from "@/components/dialog/DialogItem.vue";
 import {useRouter} from "vue-router";
 import {IMIOClient, IMIOContactManager, IMIOContact, IMIOMessage,IMIOMessageLabel} from 'imio-sdk-lite'
-import {onMounted, onActivated, reactive, getCurrentInstance, ref, nextTick} from "vue";
+import {onMounted, onActivated, reactive, getCurrentInstance, ref, nextTick, onBeforeUnmount} from "vue";
 let instance = getCurrentInstance();
 let appStore = useAppStore();
 let router = useRouter();
 let imioClient = IMIOClient.getInstance();
 
-export interface DialogObj{
-  joinId:number;
-  nickname:string;
-  avatar:string;
-  text:string;
-  tip:number;
-  sentDate: Date|null;
-}
+// export interface DialogObj{
+//   joinId:number;
+//   nickname:string;
+//   avatar:string;
+//   text:string;
+//   tip:number;
+//   sentDate: Date|null;
+// }
 
 
 
-const listData = reactive<Array<DialogObj>>([])
-
+const listData = reactive<Array<Dialog>>([])
 
 const messageListener = {
   onMessage(message: IMIOMessage): void {
@@ -33,7 +33,7 @@ const messageListener = {
       if (find) {
         let find1 = listData.find(it => it.joinId == message.joinId);
         if (!find1) {
-          let dialogObj:DialogObj = {
+          let dialogObj:Dialog = {
             joinId: message.joinId,
             nickname: find.username.length?find.username:find.nickname,
             avatar:find.avatar,
@@ -61,6 +61,13 @@ const messageListener = {
   }, onNotice(message: IMIOMessage): void {
   }
 };
+imioClient.addMessageListener(messageListener)
+
+onBeforeUnmount(() => {
+  imioClient.removeMessageListener(messageListener);
+  let length = imioClient.messageListener.length;
+  console.log("Dialog onBeforeUnmount",length)
+})
 
 let dialogStr = window.localStorage.getItem('dialog');
 if (dialogStr) {
@@ -72,7 +79,7 @@ if (dialogStr) {
       }
       // 其他字段直接返回原值
       return value;
-    }) as Array<DialogObj>;
+    }) as Array<Dialog>;
     for (let item of parse) {
       listData.push(item);
     }
@@ -80,8 +87,22 @@ if (dialogStr) {
   }
 }
 
-function jump() {
-  router.push('chat')
+function jump(i:number) {
+  let item = listData[i];
+  if (!item) {
+    return
+  }
+  item.tip = 0
+  listData.sort((a,b) => a.sentDate!!.getTime() - b.sentDate!!.getTime())
+  window.localStorage.setItem("dialog", JSON.stringify(listData))
+  console.log('jump', item)
+  router.push({
+    name:'Chat',
+    query:{
+      join: item.joinId,
+      name: item.nickname
+    }
+  })
 }
 
 function handleActionMore(i:number) {
@@ -98,10 +119,10 @@ function handleActionMore(i:number) {
 </script>
 
 <template>
-  <ActionBar title="对话" :isBack="false" :more-list="['加好友','创建群聊']" @action="handleActionMore"/>
+  <ActionBar title="对话" :subtitle="appStore.linkStatus"  :isBack="false" :more-list="['加好友','创建群聊']" @action="handleActionMore"/>
   <div class="page-body">
       <Scroll :height="Number(appStore.windowMedia.innerHeight) - 120">
-        <DialogItem dialog="{}" @click="jump"/>
+        <DialogItem :dialog="item" @click="jump(i)" v-for="(item,i) in listData" />
       </Scroll>
   </div>
 </template>

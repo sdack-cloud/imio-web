@@ -13,7 +13,7 @@ let contactManager = IMIOContactManager.getInstance().setIMIOClient(imioClient);
 let router = useRouter();
 let route = useRoute();
 let instance = getCurrentInstance();
-
+const loading = ref(false)
 interface AddApplyObj {
   avatar: string;
   name: string;
@@ -41,17 +41,22 @@ onMounted(() => {
 });
 
 function handleSubmit() {
+    loading.value = true
     if (groupObj.isGroup) {
-      groupManager.joinGroup(groupObj.groupId).then(res => {
+      groupManager.joinGroup(groupObj.groupId,text.value).then(res => {
         instance?.proxy?.$Message.success("操作成功")
+        loading.value = false
       }).catch(err => {
-        instance?.proxy?.$Message.error("操作失败")
+        instance?.proxy?.$Message.error("操作失败 "+(err.message))
+        loading.value = false
       })
     } else {
       contactManager.addContact(groupObj.groupId,text.value).then(res => {
         instance?.proxy?.$Message.success("操作成功")
+        loading.value = false
       }).catch(err => {
-        instance?.proxy?.$Message.error("操作失败")
+        instance?.proxy?.$Message.error("操作失败"+(err.message))
+        loading.value = false
       })
     }
 }
@@ -64,7 +69,7 @@ function handleSubmit() {
   <div class="page-body">
     <AvatarCard class="ivu-m-8" :title="group.name" :avatar="group.avatar" :subtitle="group.depict"/>
     <div class="ivu-p-4 ivu-pl-8">
-      {{ group.remark }}
+      {{ group.remark && group.remark.length ? '回答问题：'+group.remark : group.remark}}
     </div>
     <div class="ivu-m-8">
       <Input type="textarea" v-model="text" :rows="4" placeholder="Enter something..."
@@ -74,7 +79,7 @@ function handleSubmit() {
 
 
     <FooterToolbar >
-        <Button type="primary" long @click="handleSubmit">提交</Button>
+        <Button type="primary" long @click="handleSubmit" :loading="loading">提交</Button>
     </FooterToolbar>
   </div>
 
