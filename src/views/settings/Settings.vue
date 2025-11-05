@@ -7,11 +7,13 @@ import {User, useUserStore} from "@/stores/user.ts";
 import {useRouter} from "vue-router";
 import {getCurrentInstance, ref} from "vue";
 import {logout} from "@/api/account.ts";
+import {IMIOClient, IMIOClientConnectStatus,IMIOMessage} from 'imio-sdk-lite'
 
 let router = useRouter();
 let instance = getCurrentInstance();
 
 let userStore = useUserStore();
+let imioClient = IMIOClient.getInstance();
 
 function handleLogout() {
   let token = Cookies.get("token");
@@ -25,6 +27,7 @@ function handleLogout() {
     userStore.clearProfile();
     Cookies.remove("token")
     Cookies.remove("refresh")
+    imioClient.disconnect()
     // logout(refresh,2).then();
     window.localStorage.removeItem("dialog");
     router.push('/')

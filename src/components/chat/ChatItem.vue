@@ -6,7 +6,7 @@ import {IMIOClient,IMIOContact,IMIOMessage,IMIOMessageSender} from 'imio-sdk-lit
 import {useUserStore} from "@/stores/user.ts";
 const userStore = useUserStore();
 
-interface Msg {
+export interface Msg {
   messageId: string;
   joinId: number;
   fromId: string;
@@ -33,17 +33,20 @@ interface Msg {
   talk: number;
   citeData: Msg | null;
   sentDate: Date | null;
+  hintList: Array<Msg>
 }
 
 
 
-const emits = defineEmits(['callAvatar'])
+const emits = defineEmits(['callAvatar','callQuote','callAt','callDel','callCopy'])
 
 const props = withDefaults(defineProps<{
-  mode: boolean, // 模式
-  msg : Msg | null
+  mode: boolean, // 模式 true 向右，false 向左
+  msg : Msg | null,
+  isAt: boolean
 }>(), {
   mode:true,
+  isAt:false,
   msg:  null
 })
 
@@ -52,28 +55,12 @@ const excessStyle = reactive({
   backgroundColor: '#fde3cf'
 })
 
-const avatarList = reactive([
+const avatarList = [
   {
-    src: 'https://dev-file.iviewui.com/BbnuuEiM0QXNPHVCvb3E2AFrawIjCkqW/avatar',
+    src: 'https://ossweb-img.qq.com/images/lol/web201310/skin/big3006.jpg',
     tip: '史蒂夫·乔布斯'
-  },
-  {
-    src: 'https://dev-file.iviewui.com/zhj85zgAfEjChCNIKT1LQENUIOyOYCaX/avatar',
-    tip: '斯蒂夫·沃兹尼亚克'
-  },
-  {
-    src: 'https://dev-file.iviewui.com/TkH54UozsINlex15TAMI00GElsfsKSiC/avatar',
-    tip: '乔纳森·伊夫'
-  },
-  {
-    src: 'https://dev-file.iviewui.com/xrzbBR99F6tYsDJPLNrvwhllowbuL7Gw/avatar',
-    tip: '蒂姆·库克'
-  },
-  {
-    src: 'https://dev-file.iviewui.com/bgrngoUb9A6UQ2kAwBFtnSNzhrh2qj1O/avatar',
-    tip: '比尔·费尔南德斯'
   }
-])
+]
 
 
 </script>
@@ -84,7 +71,7 @@ const avatarList = reactive([
     <div class="flex" :class="props.mode?'':'flex-reverse-row'">
 
       <div class="chat-head">
-        <Avatar size="large" :src="props.mode?msg?.thumb:userStore.userAvatar" @click="emits('callAvatar',msg)" width="15" height="15"/>
+        <Avatar size="large" :src="msg?.thumb" @click="emits('callAvatar',msg)" width="15" height="15"/>
       </div>
 
       <div class="item-content flex-sub flex flex-direction " :class="props.mode?'align-start':'align-end'">
@@ -99,25 +86,25 @@ const avatarList = reactive([
             </Text>
             <template #content>
               <div class="flex flex-wrap align-center">
-                <div class="ivu-p-8 flex flex-direction align-center">
+                <div class="ivu-p-8 flex flex-direction align-center" @click="emits('callCopy')">
                   <div>
-                    <Icon type="md-document" size="20"/>
+                    <Icon type="md-document" size="20"  />
                   </div>
                   <div class="ivu-mt-4">复制</div>
                 </div>
-                <div class="ivu-p-8 flex flex-direction align-center">
+                <div class="ivu-p-8 flex flex-direction align-center" @click="emits('callQuote')">
                   <div>
                     <Icon type="md-quote" size="20"/>
                   </div>
                   <div class="ivu-mt-4">引用</div>
                 </div>
-                <div class="ivu-p-8 flex flex-direction align-center">
+                <div class="ivu-p-8 flex flex-direction align-center" @click="emits('callAt')" v-show="isAt">
                   <div>
                     <Icon type="md-at" size="20"/>
                   </div>
                   <div class="ivu-mt-4">at</div>
                 </div>
-                <div class="ivu-p-8 flex flex-direction align-center">
+                <div class="ivu-p-8 flex flex-direction align-center"  @click="emits('callDel')">
                   <div>
                     <Icon type="md-undo" size="20"/>
                   </div>
@@ -133,8 +120,8 @@ const avatarList = reactive([
             {{msg?.citeData?msg?.citeData.text:''}}
           </Text>
         </div>
-        <div class="chat-avatar">
-          <AvatarList :list="avatarList" :max="10" :excess-style="excessStyle" size="small"/>
+        <div class="chat-avatar" v-if="msg && msg!!.hintList">
+          <AvatarList :list="msg?.hintList" :max="10" :excess-style="excessStyle" size="small"/>
         </div>
       </div>
 

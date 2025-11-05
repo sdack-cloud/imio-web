@@ -17,7 +17,7 @@
     "node": "^18.20.6 || >=18.20.6"
   },
   "dependencies": {
-    "imio-sdk-lite": "^0.0.42",
+    "imio-sdk-lite": "^0.0.50",
     "js-cookie": "^3.0.5",
     "pinia": "^3.0.3",
     "view-ui-plus": "^1.3.1",

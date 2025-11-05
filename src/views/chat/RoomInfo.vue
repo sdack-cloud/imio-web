@@ -29,7 +29,8 @@ import {
   IMIOGroupManager,
   IMIOMember,
   IMIOGroup,
-  IMIOContactNotice
+  IMIOContactNotice,
+  IMIOGroupType
 } from 'imio-sdk-lite'
 import {useUserStore} from "@/stores/user.ts";
 import MemberItem from "@/components/chat/MemberItem.vue";
@@ -95,6 +96,7 @@ function getMember() {
         }
         if (userStore.user && userStore.user!!.id.length) {
           if (userStore.user!!.id == item.userId) {
+            item.nickname = '我'
             Object.assign(selfMember, item);
           }
         }
@@ -196,6 +198,23 @@ function handleConfirm2() {
       ] )
     }
   })
+}
+
+function handleConfirm3(i: number,title: string) {
+  let element = listDate[i];
+  if (!element) {
+    return
+  }
+  instance?.proxy?.$Modal.info({
+    title: title,
+    onOk: () => {
+      console.log('OK');
+      handleGroupCede(element.userId);
+    },
+    onCancel: () => {
+      console.log('Cancel')
+    },
+  });
 }
 
 function handleGroupName() {
@@ -375,15 +394,19 @@ function handleGroupCede(userId : string) {
 
   groupManager.changeOwner(Number(joinId),userId).then(res => {
     instance?.proxy?.$Message.success("操作成功")
-    // group.isMute = d;
   }).catch(err => {
     instance?.proxy?.$Message.error("操作失败")
   })
 }
 
 // 群类型
-function handleGroupType(type : number) {
-
+function handleGroupType() {
+  let type : number = 0
+  if (group.type == IMIOGroupType.private) {
+    type = IMIOGroupType.protected
+  } else {
+    type = IMIOGroupType.private
+  }
   groupManager.setGroupType(Number(joinId),type).then(res => {
     instance?.proxy?.$Message.success("操作成功")
     group.type = type;
@@ -413,6 +436,8 @@ function signOut() {
     instance?.proxy?.$Message.error("退出失败")
   })
 }
+
+
 </script>
 
 <template>
@@ -497,7 +522,7 @@ function signOut() {
 
 
 
-    <Card class="ivu-m" :bordered="false" :dis-hover="true" shadow>
+    <Card class="ivu-m" :bordered="false" :dis-hover="true" shadow v-if="selfMember.role == 'MANAGER' || selfMember.role == 'MASTER'">
       <template #title>
         群设置
       </template>
@@ -519,7 +544,7 @@ function signOut() {
             {{group?.ask}}
           </template>
         </Cell>
-        <Cell title="群类型" extra="details" v-if="group.isSelf">
+        <Cell title="群类型" extra="details" v-if="group.isSelf" @click="handleGroupType">
           <template #label>
             <div v-if="group.type == 1">公开</div>
             <div v-if="group.type == 2">默认</div>
@@ -567,7 +592,7 @@ function signOut() {
 
 
     <Drawer height="350" title="选择成员" placement="bottom" :closable="false"  v-model="isDrawer">
-      <MemberItem v-for="(item,i) in listDate" :data="item"/>
+      <MemberItem v-for="(item,i) in listDate" :data="item" @click="handleConfirm3(i,'确定转让群吗')"/>
     </Drawer>
   </div>
 </template>

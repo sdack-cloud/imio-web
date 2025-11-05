@@ -77,6 +77,8 @@ function getMember() {
         }
         if (userStore.user && userStore.user!!.id.length) {
           if (userStore.user!!.id == item.userId) {
+            item.nickname = '我'
+            item.username = '我'
             Object.assign(selfMember, item);
           }
         }

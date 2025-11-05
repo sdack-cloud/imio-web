@@ -1,7 +1,7 @@
 <template>
   <RouterView/>
   <FooterToolbar >
-    <HomeFooterBar @jump="jump"/>
+    <HomeFooterBar @jump="jump" :index="index"/>
   </FooterToolbar>
 </template>
 
@@ -10,36 +10,26 @@ import {Footer, FooterToolbar} from "view-ui-plus";
 import HomeFooterBar from "@/components/HomeFooterBar.vue";
 import {useRouter} from "vue-router";
 import {useAppStore} from "@/stores/app.ts";
-import {getCurrentInstance, onActivated, onDeactivated, onMounted} from "vue";
+import {getCurrentInstance, onActivated, onDeactivated, onMounted, ref} from "vue";
 
-import Cookies from 'js-cookie';
-import {User, useUserStore} from "@/stores/user.ts";
 
 import {IMIOClient, IMIOClientConnectStatus,IMIOMessage} from 'imio-sdk-lite'
+import {User, useUserStore} from "@/stores/user.ts";
+import Cookies from 'js-cookie';
 
 
-let userStore = useUserStore();
 let router = useRouter();
 let appStore  = useAppStore();
 let instance = getCurrentInstance();
+let userStore = useUserStore();
 
 let imioClient = IMIOClient.getInstance();
 
-appStore.windowMedia.innerHeight = window.innerWidth+""
-appStore.windowMedia.innerHeight = window.innerHeight+""
-
-window.addEventListener('resize', (e: any) => {
-  appStore.windowMedia.innerHeight = e.target.innerHeight+"";
-  appStore.windowMedia.innerWidth = e.target.innerWidth+"";
-
-  instance?.proxy?.$Message.info("Height:"+e.target.innerHeight)
-  console.log('innerHeight',appStore.windowMedia.innerHeight)
-  console.log('innerWidth',appStore.windowMedia.innerWidth)
-})
+let index = ref(0);
 
 
 onMounted(() => {
-  console.warn('Index onMounted');
+  console.warn('Index onMounted',imioClient.connectStatus);
   let token = Cookies.get("token");
   if (token) {
     let splitToken = token.split(' ');
@@ -48,37 +38,17 @@ onMounted(() => {
     let user :User = {id: payload.account,name:payload.nickname ,email:"",avatar:""}
     userStore.user = user;
 
+
     if (imioClient.isClose()) {
-      imioClient.connect(user.id,splitToken[1],user.name,clientListener)
+      if (imioClient.connectStatus <= IMIOClientConnectStatus.CONNECTING) {
+        imioClient.connect(user.id,splitToken[1],user.name)
+      }
     }
   }
-  imioClient.messageListener.push(messageListener);
 });
 
-const messageListener = {
-  onMessage(message: IMIOMessage): void {
-  }, onMessageRead(contactId: number, messageId: string): void {
-  }, onMessageRevoke(contactId: number, messageId: string): void {
-  }, onNotice(message: IMIOMessage): void {
-  }
-};
-const clientListener = {
-  onConnectStatus(status: IMIOClientConnectStatus, retry: number): void {
-    console.log('onConnectStatus',status,retry);
-  }, onConnected(): void {
-    console.log('onConnected')
-    let userInfo = imioClient.getUserInfo();
-    if (userStore.user) {
-      userStore.user!!.avatar = userInfo.avatar;
-    }
-  }, onDisconnected(): void {
-    console.log('onDisconnected')
-  }, onTokenExpired(): void {
-    console.log('onTokenExpired')
-  }
-}
-
 function jump(pos: number) {
+  index.value = pos;
   switch (pos) {
     case 0:
       router.push('/')

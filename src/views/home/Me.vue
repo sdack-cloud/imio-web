@@ -29,7 +29,7 @@ function closed() {
 }
 
 function callSetting() {
-  router.push("/setting")
+  router.push("setting")
 }
 
 function handleTest() {

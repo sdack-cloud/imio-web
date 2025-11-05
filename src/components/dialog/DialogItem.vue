@@ -7,13 +7,12 @@ import {data} from "autoprefixer";
 
 let router = useRouter();
 
-interface Dialog {
+export interface Dialog {
   joinId: number,
   avatar: string,
-  name: string,
-  username: string,
-  remark: string,
-  date:Date,
+  nickname: string,
+  text: string,
+  sentDate: Date|null;
   tip:number,
 }
 
@@ -35,22 +34,27 @@ function callItem(item: Dialog) {
     <div class="flex align-center justify-between">
       <Avatar size="large" :src="dialog.avatar" />
       <div class="item-content flex flex-direction align-start">
-        <Text strong class="title" ellipsis >{{ dialog.name }}</Text>
-        <Text class="subtitle" ellipsis>{{ dialog.remark }}</Text>
+        <Text strong class="title" ellipsis >{{ dialog.nickname }}</Text>
+        <Text class="subtitle" ellipsis>{{ dialog.text }}</Text>
       </div>
-      <div class="flex flex-direction justify-around">
+      <div class="flex flex-direction justify-end align-end more">
         <div class="more-dot" v-show="dialog.tip">
           <Badge :count="dialog.tip" />
         </div>
         <div class="more-time">
-          <Time :time="new Date()" />
+          <Time :time="dialog.sentDate"  v-if="dialog.sentDate"/>
         </div>
       </div>
     </div>
   </Card>
 </template>
-
+<style>
+.ivu-card-body {
+  padding: 10px;
+}
+</style>
 <style scoped>
+
 .contact-item {
   margin: 10px 0px 10px 0px;
 }
@@ -60,11 +64,14 @@ function callItem(item: Dialog) {
   width: 80%;
 }
 .title {
-  font-size: 18px;
+  font-size: 16px;
 }
 .subtitle {
   font-size: 14px;
   color: #c5c8ce;
+}
+.more {
+  min-width: 40px;
 }
 .more-dot {
   min-width: 20px;
@@ -74,5 +81,8 @@ function callItem(item: Dialog) {
   min-width: 30px;
   min-height: 20px;
   color: #c5c8ce;
+}
+.ivu-time {
+  font-size: 10px;
 }
 </style>
