@@ -1,19 +1,28 @@
 <script setup lang="ts">
 
 import ActionBar from "@/components/ActionBar.vue";
-import {Avatar, Button, Icon, Image, Text} from "view-ui-plus";
-import { onMounted } from 'vue'
+import {Avatar, Badge, Button, Dropdown, DropdownItem, DropdownMenu, Icon, Image, Text} from "view-ui-plus";
+import {getCurrentInstance, onMounted, ref} from 'vue'
 
-import {IMIOClient,IMIOClientOption,IMIOClientConnectStatus} from 'imio-sdk-lite'
+import {IMIOClient,IMIOClientOption,IMIOClientConnectStatus,IMIOUserInfoManager} from 'imio-sdk-lite'
 import router from "@/router";
 import {useUserStore} from "@/stores/user.ts";
+import {useAppStore} from "@/stores/app.ts";
+let appStore  = useAppStore();
 let userStore = useUserStore();
-
 let imioClient = IMIOClient.getInstance();
+let userInfoManager = IMIOUserInfoManager.getInstance().setClient(imioClient);
+let instance = getCurrentInstance();
+
+appStore.homeIdx = 3;
+
+const deviceStatus = ref("")
 
 onMounted(() => {
   if (!imioClient.isClose()) {
     let userInfo = imioClient.getUserInfo();
+    deviceStatus.value = userInfo.status;
+    console.log("userInfo",userInfo)
     if (userStore.user) {
       userStore.user!!.avatar = userInfo.avatar;
       userStore.user!!.name = userInfo.nickname;
@@ -35,7 +44,14 @@ function callSetting() {
 function handleTest() {
 
 }
-
+function handleDeviceStatus(status:string) {
+  userInfoManager.updateDeviceStatus(status).catch(res => {
+    instance?.proxy?.$Message.success("操作成功")
+    deviceStatus.value = status;
+  }).catch(err => {
+    instance?.proxy?.$Message.error("操作失败")
+  })
+}
 </script>
 
 <template>
@@ -52,7 +68,19 @@ function handleTest() {
          <Icon type="ios-ribbon-outline" />
        </div>
        <div>
-         <span>昵称</span>
+         <Dropdown trigger="click" style="margin-left: 20px" >
+           <Badge status="error" text="离线" v-show="deviceStatus == '' || deviceStatus == 'offline'"/>
+           <Badge status="success" text="在线" v-show="deviceStatus == 'online'"/>
+           <Badge status="warning" text="忙碌" v-show="deviceStatus == 'online-busy'"/>
+           <Badge status="default" text="离开" v-show="deviceStatus == 'online-leave'"/>
+           <template #list>
+             <DropdownMenu>
+               <DropdownItem name="online" @click="handleDeviceStatus('online')" v-show="deviceStatus != 'online'">在线</DropdownItem>
+               <DropdownItem name="online-busy" @click="handleDeviceStatus('online-busy')" v-show="deviceStatus != 'online-busy'">忙碌</DropdownItem>
+               <DropdownItem name="online-leave" @click="handleDeviceStatus('online-leave')" v-show="deviceStatus != 'online-leave'">离开</DropdownItem>
+             </DropdownMenu>
+           </template>
+         </Dropdown>
        </div>
        </div>
     </div>
@@ -96,8 +124,7 @@ function handleTest() {
   width: 100%;
   min-height: 200px;
   /* 底部圆弧效果 - 只设置底部的圆角 */
-  border-bottom-left-radius: 50px;
-  border-bottom-right-radius: 50px;
+  border-radius: 0 0 250px 250px / 0 0 40px 40px;
   /* 内容与底部圆角的距离控制 */
   position: relative;
   overflow: hidden;
@@ -108,5 +135,9 @@ function handleTest() {
 <style >
 .head-avatar .ivu-image-img{
   border-radius:50%;
+}
+.ivu-badge-status-text {
+  color: #ffffff;
+
 }
 </style>

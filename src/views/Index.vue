@@ -1,16 +1,16 @@
 <template>
   <RouterView/>
   <FooterToolbar >
-    <HomeFooterBar @jump="jump" :index="index"/>
+    <HomeFooterBar @jump="jump" :index="appStore.homeIdx"/>
   </FooterToolbar>
 </template>
 
 <script setup lang="ts">
 import {Footer, FooterToolbar} from "view-ui-plus";
 import HomeFooterBar from "@/components/HomeFooterBar.vue";
-import {useRouter} from "vue-router";
+import {useRouter,useRoute} from "vue-router";
 import {useAppStore} from "@/stores/app.ts";
-import {getCurrentInstance, onActivated, onDeactivated, onMounted, ref} from "vue";
+import {computed, getCurrentInstance, onActivated, onDeactivated, onMounted, ref} from "vue";
 
 
 import {IMIOClient, IMIOClientConnectStatus,IMIOMessage} from 'imio-sdk-lite'
@@ -19,13 +19,13 @@ import Cookies from 'js-cookie';
 
 
 let router = useRouter();
+let route = useRoute();
 let appStore  = useAppStore();
 let instance = getCurrentInstance();
 let userStore = useUserStore();
 
 let imioClient = IMIOClient.getInstance();
 
-let index = ref(0);
 
 
 onMounted(() => {
@@ -48,7 +48,6 @@ onMounted(() => {
 });
 
 function jump(pos: number) {
-  index.value = pos;
   switch (pos) {
     case 0:
       router.push('/')
@@ -77,6 +76,7 @@ function  getJwtPayload(token:string): Object {
   // 解析为JSON对象
   return JSON.parse(decodedPayload);
 }
+
 
 
 </script>

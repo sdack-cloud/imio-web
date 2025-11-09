@@ -12,10 +12,10 @@ import {useRouter} from "vue-router";
 import {useAppStore} from "@/stores/app.ts";
 import {getCurrentInstance, onMounted} from "vue";
 let imioClient = IMIOClient.getInstance();
-IMIOGroupManager.getInstance().setIMIOClient(imioClient)
-IMIOContactManager.getInstance().setIMIOClient(imioClient)
-IMIOChatManager.getInstance().setIMIOClient(imioClient)
-IMIOUserInfoManager.getInstance().setIMIOClient(imioClient)
+IMIOGroupManager.getInstance().setClient(imioClient)
+IMIOContactManager.getInstance().setClient(imioClient)
+IMIOChatManager.getInstance().setClient(imioClient)
+IMIOUserInfoManager.getInstance().setClient(imioClient)
 let userStore = useUserStore();
 let router = useRouter();
 let appStore  = useAppStore();
@@ -66,7 +66,10 @@ const clientListener = {
     }
   }, onDisconnected(): void {
     console.log('onDisconnected')
+    appStore.linkStatus = '连接关闭'
+
   }, onTokenExpired(): void {
+    appStore.linkStatus = '凭证过期'
     console.log('onTokenExpired')
   }
 }
@@ -120,16 +123,6 @@ function  getJwtPayload(token:string): Object {
 
 <template>
   <div class="app">
-    <Sider v-if="false"  breakpoint="sm" width="80" :hide-trigger="true" :style="{position: 'fixed', height: '100vh',  left: 0, overflow: 'auto'}">
-      <div class="flex flex-direction justify-center align-center" >
-        <Image src="https://i.loli.net/2017/08/21/599a521472424.jpg" width="28px" height="28px"/>
-        <text class="text-black">首页</text>
-      </div>
-      <div class="flex flex-direction justify-center align-center" >
-        <Image src="https://i.loli.net/2017/08/21/599a521472424.jpg" width="28px" height="28px"/>
-        <text class="text-black">首页</text>
-      </div>
-    </Sider>
     <router-view />
   </div>
 </template>

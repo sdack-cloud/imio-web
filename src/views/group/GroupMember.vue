@@ -33,7 +33,7 @@ let selfMember = reactive<IMIOMember>({})
 const confirmText = ref('');
 let idx : number= -1;
 
-let groupManager = IMIOGroupManager.getInstance().setIMIOClient(imioClient);
+let groupManager = IMIOGroupManager.getInstance().setClient(imioClient);
 let group = reactive<IMIOGroup>({isSelf:false})
 
 onMounted(() => {

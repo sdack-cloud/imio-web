@@ -23,11 +23,11 @@ let appStore = useAppStore();
 let router = useRouter();
 let imioClient = IMIOClient.getInstance();
 
-let imioContactManager = IMIOContactManager.getInstance().setIMIOClient(imioClient);
-let userInfoManager = IMIOUserInfoManager.getInstance().setIMIOClient(imioClient);
+let imioContactManager = IMIOContactManager.getInstance().setClient(imioClient);
+let userInfoManager = IMIOUserInfoManager.getInstance().setClient(imioClient);
 const contactList = reactive<Array<IMIOContact>>([])
 const noticeList = reactive<Array<IMIOMessage>>([])
-
+appStore.homeIdx = 2;
 const noticeCount = ref(0)
 const actionCount = ref(0)
 
@@ -58,6 +58,8 @@ const contactListener = {
       let indexOf = contactList.findIndex(it => it.contactId == contact.contactId);
       if (indexOf == -1) {
         contactList.push(contact)
+      } else {
+        contactList.splice(indexOf,1,contact)
       }
     }
   }
@@ -89,10 +91,13 @@ onBeforeUnmount(() => {
 function getContactList() {
   imioContactManager.getContactList().then((res:Array<IMIOContact>) => {
     for (let item of res) {
-      let indexOf = contactList.findIndex(it => it.contactId == item.contactId);
-      if (indexOf == -1) {
+      let find = contactList.find(it => it.contactId == item.contactId);
+      if (!find) {
         contactList.push(item)
+      } else {
+        find.status = item.status
       }
+      console.log(item)
     }
     getMyNotice()
   }).catch((e) => {

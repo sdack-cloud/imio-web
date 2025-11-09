@@ -15,8 +15,8 @@ import {
 
 let instance = getCurrentInstance();
 let imioClient = IMIOClient.getInstance();
-let imioContactManager = IMIOContactManager.getInstance().setIMIOClient(imioClient);
-let userInfoManager = IMIOUserInfoManager.getInstance().setIMIOClient(imioClient);
+let imioContactManager = IMIOContactManager.getInstance().setClient(imioClient);
+let userInfoManager = IMIOUserInfoManager.getInstance().setClient(imioClient);
 
 const descMessage = ref("") // 操作回复信息
 const listData = reactive<Array<IMIOMessage>>([]);

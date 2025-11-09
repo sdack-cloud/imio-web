@@ -15,7 +15,7 @@ let appStore = useAppStore();
 let instance = getCurrentInstance();
 let userStore = useUserStore();
 let imioClient = IMIOClient.getInstance();
-let groupManager = IMIOGroupManager.getInstance().setIMIOClient(imioClient);
+let groupManager = IMIOGroupManager.getInstance().setClient(imioClient);
 
 const mode = ref(true) // true 房间，false 人员
 const text = ref("");

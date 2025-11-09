@@ -2,7 +2,19 @@
 
 import ActionBar from "@/components/ActionBar.vue";
 import {useAppStore} from "@/stores/app.ts";
-import {Button, Drawer, FooterToolbar, Icon, List, ListItem, ListItemMeta, Scroll, Tag, Upload} from "view-ui-plus";
+import {
+  Button,
+  Drawer,
+  FooterToolbar,
+  Icon, Image,
+  List,
+  ListItem,
+  ListItemMeta, Modal,
+  Scroll,
+  Tag,
+  Tooltip,
+  Upload,
+} from "view-ui-plus";
 import ChatItem from "@/components/chat/ChatItem.vue";
 import {ref, onMounted, getCurrentInstance, watchEffect, watch, reactive, nextTick, onBeforeUnmount} from "vue";
 import {useRouter,useRoute} from "vue-router";
@@ -31,6 +43,7 @@ const scrollRef = ref<HTMLElement | null>(null)
 const isTool = ref(false)
 const selectMember = ref(false)
 const text = ref('')
+const isLink = ref(false)
 const citeMessage = ref<IMIOMessage>({}) // 引用信息
 
 const name = ref("")
@@ -43,8 +56,8 @@ const checkMember = reactive<Array<IMIOMember>>([]) // 群选择的成员
 let group = reactive<IMIOGroup>({isSelf:false})
 
 let imioClient = IMIOClient.getInstance();
-let chatManager = IMIOChatManager.getInstance().setIMIOClient(imioClient);
-let groupManager = IMIOGroupManager.getInstance().setIMIOClient(imioClient);
+let chatManager = IMIOChatManager.getInstance().setClient(imioClient);
+let groupManager = IMIOGroupManager.getInstance().setClient(imioClient);
 
 let contactList = imioClient.contactList;
 let imioContact: IMIOContact|null = null;
@@ -367,8 +380,14 @@ function callSend() {
   if (!joinId.length) {
     return
   }
-
+  if (!text.value.length) {
+    return;
+  }
   let messageSender = IMIOMessageSender.buildSimpleText(Number(joinId), text.value);
+  if (isLink && text.value.indexOf("http") > -1) {
+    messageSender = IMIOMessageSender.buildImage(Number(joinId),'', text.value);
+  }
+
   if (citeMessage.value.length) {
     messageSender.withCite(citeMessage.value.messageId)
   }
@@ -432,26 +451,43 @@ function callSend() {
 
   <div class="footer-toolbar flex flex-direction">
     <div class="cite"  @click="handleCiteCancel">
-      {{ citeMessage.text }}
+      <div v-show="citeMessage.type == 'txt'">
+        {{ citeMessage.text }}
+      </div>
+      <div v-show="citeMessage.type == 'img'">图片</div>
+      <div v-show="citeMessage.type == 'audio'">语音</div>
+      <div v-show="citeMessage.type == 'video'">视频</div>
+      <div v-show="citeMessage.type == 'file'">文件</div>
+      <div v-show="citeMessage.type == 'loc'">位置</div>
     </div>
     <div class="footer-toolbar-input flex justify-around">
       <div class="ivu-m-4 flex align-center">
         <Icon type="ios-add-circle-outline"  size="28" @click="isTool = !isTool"/>
+        <Tooltip content="点击切换文字与连接" placement="top" class="ivu-mt-4">
+          <Icon v-show="!isLink" type="ios-link"  size="25" @click="isLink = !isLink"/>
+          <Icon v-show="isLink" type="ios-text-outline"  size="30" @click="isLink = !isLink"/>
+        </Tooltip>
       </div>
       <div class="flex-sub ivu-m-4">
-
         <Input type="textarea"  v-model="text" :autofocus="true" size="large" suffix="md-add"  :autosize="{minRows: 1}"
-        @input="onInput" @on-enter="callSend" @on-focus="callFocus"
+        @input="onInput" @on-enter="callSend" @on-focus="callFocus" :placeholder="isLink?'复制图片链接':''"
         />
       </div>
       <div class="flex align-center ivu-m-4">
-        <Button @click="callSend" size="small">发送</Button>
+        <Button @click="callSend" size="small">
+          发送
+        </Button>
       </div>
     </div>
 
     <transition name="move-down">
     <div class="footer-toolbar-tool" v-show="isTool">
-
+      <div class="flex  align-start">
+        <Link to="https://tinyjpg.com" target="_blank" class="flex flex-direction align-center">
+            <Image src="./src/assets/icon/image-outline.svg" width="30px" height="30px"/>
+          <Text>图片</Text>
+        </Link>
+      </div>
     </div>
     </transition>
   </div>
@@ -489,6 +525,8 @@ function callSend() {
 .footer-toolbar-tool {
   width: 100%;
   height: 20vh;
+  background: #f8f8f8;
+  padding: 20px 20px 20px 20px;
 }
 
 .cite {

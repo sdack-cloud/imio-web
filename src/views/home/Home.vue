@@ -5,7 +5,7 @@ import {Sider} from "view-ui-plus";
 import {useAppStore} from "@/stores/app.ts";
 let appStore = useAppStore();
 
-
+appStore.homeIdx = 0;
 </script>
 
 <template>

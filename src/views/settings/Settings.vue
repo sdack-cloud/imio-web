@@ -8,10 +8,11 @@ import {useRouter} from "vue-router";
 import {getCurrentInstance, ref} from "vue";
 import {logout} from "@/api/account.ts";
 import {IMIOClient, IMIOClientConnectStatus,IMIOMessage} from 'imio-sdk-lite'
+import {useAppStore} from "@/stores/app.ts";
 
 let router = useRouter();
 let instance = getCurrentInstance();
-
+let appStore = useAppStore();
 let userStore = useUserStore();
 let imioClient = IMIOClient.getInstance();
 
@@ -27,10 +28,11 @@ function handleLogout() {
     userStore.clearProfile();
     Cookies.remove("token")
     Cookies.remove("refresh")
+    appStore.linkStatus = ''
     imioClient.disconnect()
     // logout(refresh,2).then();
     window.localStorage.removeItem("dialog");
-    router.push('/')
+    router.replace('/')
   }).catch(err => {
     console.error(err)
     instance?.proxy?.$Message.error("退出失败")

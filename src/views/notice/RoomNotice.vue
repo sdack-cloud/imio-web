@@ -15,8 +15,8 @@ import {
 import {getCurrentInstance, onMounted, reactive} from "vue";
 let instance = getCurrentInstance();
 let imioClient = IMIOClient.getInstance();
-let userInfoManager = IMIOUserInfoManager.getInstance().setIMIOClient(imioClient);
-let chatManager = IMIOChatManager.getInstance().setIMIOClient(imioClient);
+let userInfoManager = IMIOUserInfoManager.getInstance().setClient(imioClient);
+let chatManager = IMIOChatManager.getInstance().setClient(imioClient);
 
 const listData = reactive<Array<IMIOMessage>>([]);
 

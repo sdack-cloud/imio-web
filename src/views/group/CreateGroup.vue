@@ -19,8 +19,8 @@ import {useUserStore} from "@/stores/user.ts";
 let instance = getCurrentInstance();
 let router = useRouter();
 let imioClient = IMIOClient.getInstance();
-let imioContactManager = IMIOContactManager.getInstance().setIMIOClient(imioClient);
-let groupManager = IMIOGroupManager.getInstance().setIMIOClient(imioClient);
+let imioContactManager = IMIOContactManager.getInstance().setClient(imioClient);
+let groupManager = IMIOGroupManager.getInstance().setClient(imioClient);
 const contactList = reactive<Array<IMIOContact>>([])
 let appStore = useAppStore();
 let userStore = useUserStore();
@@ -74,7 +74,12 @@ function handleSearch() {
   }
   let map = filter.map(it => it.userId);
   groupManager.createGroup(text.value,map).then(res => {
-    instance?.proxy?.$Message.error('创建成功');
+    instance?.proxy?.$Message.success({
+      content:"操作成功",
+      onClose:() => {
+        router.back()
+      }
+    })
   }).catch(err => {
     instance?.proxy?.$Message.error('创建失败');
   })

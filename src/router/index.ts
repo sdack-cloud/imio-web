@@ -1,7 +1,6 @@
 import {createRouter, createWebHashHistory, createWebHistory} from 'vue-router'
 import routes from './routes'
 import Cookies from 'js-cookie';
-
 // 在应用启动时检查并重定向URL
 if (typeof window !== 'undefined') {
     /*
@@ -32,7 +31,7 @@ let router = createRouter({
 router.beforeEach(async (to, from, next) => {
 
     // 判断是否需要登录才可以进入
-    console.log('=========== router =============')
+    // console.log(`=========== router ============= ${to.name}`)
     // 判断是否需要登录才可以进入
     if (to.matched.some(_ => _.meta.auth)) {
         // 这里依据 token 判断是否登录，可视情况修改

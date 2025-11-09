@@ -11,7 +11,7 @@ let router = useRouter();
 let instance = getCurrentInstance();
 let userStore = useUserStore();
 const fromData = reactive({
-  username: '176554801818',
+  username: '',
   password:'',
   smscode: '',
 })
@@ -87,7 +87,7 @@ function handleForgot() {
     <div class="demo-login flex justify-center" >
       <Card  class="card ">
       <div class="logo flex  justify-center">
-        <Image  src="./src/assets/logo.png" width="50px" height="50px" />
+        <Image  src="@/src/assets/logo.png" width="100px" height="100px" />
       </div>
 
       <Login @on-submit="handleSubmit">

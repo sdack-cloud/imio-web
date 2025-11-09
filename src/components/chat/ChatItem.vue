@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import {Avatar, AvatarList, Card, Icon, Poptip, Text,Time} from "view-ui-plus";
+import {Avatar, AvatarList, Card, Icon, Image, Poptip, Text, Time} from "view-ui-plus";
 import {reactive} from "vue";
 import {IMIOClient,IMIOContact,IMIOMessage,IMIOMessageSender} from 'imio-sdk-lite';
 import {useUserStore} from "@/stores/user.ts";
@@ -81,9 +81,14 @@ const avatarList = [
         </div>
         <div class="chat-content flex " :class="props.mode?'justify-start':'justify-end'">
           <Poptip word-wrap width="200">
-            <Text class="chat-text">
+            <Text class="chat-text" v-if="msg?.type == 'txt'">
               {{ msg?.text }}
             </Text>
+            <Image v-if="msg?.type == 'img'" :src="msg?.host+msg?.url" :preview="true" :preview-list="[msg?.host+msg?.url]">
+              <template #error>
+                <Icon type="./src/assets/icon/image-outline.svg" size="30" color="#ccc" />
+              </template>
+            </Image>
             <template #content>
               <div class="flex flex-wrap align-center">
                 <div class="ivu-p-8 flex flex-direction align-center" @click="emits('callCopy')">
@@ -134,6 +139,10 @@ const avatarList = [
 </template>
 
 <style scoped>
+.ivu-image {
+  max-width: 250px;
+  max-height: 250px;
+}
 .chat-card {
   margin: 0px 10px 0px 10px;
 }

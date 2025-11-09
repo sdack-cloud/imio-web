@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { getCurrentInstance} from "vue";
 import { Message, Notice } from 'view-ui-plus';
-let instance = getCurrentInstance();
 
 // 创建一个错误
 function errorCreate (msg: any) {
@@ -13,18 +12,19 @@ function errorCreate (msg: any) {
 // 记录和显示错误
 function errorLog (err: any) {
     // TODO: Add Pinia log store integration
-    console.error('Request Error:', {
-        message: '数据请求异常',
-        type: 'error',
-        error: err
-    });
+    // console.error('Request Error:', {
+    //     message: '数据请求异常',
+    //     type: 'error',
+    //     error: err
+    // });
     // 打印到控制台
-        console.log(err);
+    //     console.log(err);
     // 显示提示，可配置使用 View UI Plus 的 $Message 还是 $Notice 组件来显示
-    Message.error({
-        content: err.message,
-        duration: 3000
-    });
+
+    // Message.error({
+    //     content: err.message,
+    //     duration: 3000
+    // });
 }
 
 // 创建一个 axios 实例

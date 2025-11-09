@@ -15,8 +15,8 @@ const props = withDefaults(defineProps<{
 <template>
   <div class="home-footer-bar flex justify-around">
     <div class="flex flex-direction justify-center align-center" @click="emit('jump',0)">
-      <Image src="../src/assets/home/home.svg" width="28px" height="28px" v-show="index == 0"/>
-      <Image src="../src/assets/home/home-outline.svg" width="28px" height="28px" v-show="index != 0"/>
+      <Image src="./src/assets/home/home.svg" width="28px" height="28px" v-show="index == 0"/>
+      <Image src="./src/assets/home/home-outline.svg" width="28px" height="28px" v-show="index != 0"/>
       <text class="text-black">首页</text>
     </div>
     <div class="flex flex-direction justify-center align-center" @click="emit('jump',1)">

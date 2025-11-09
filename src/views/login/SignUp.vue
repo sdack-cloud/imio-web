@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import ActionBar from "@/components/ActionBar.vue";
-import {Captcha, Card, FooterToolbar, Password, Submit, UserName} from "view-ui-plus";
+import {Captcha, Card, FooterToolbar, Image, Password, Submit, UserName} from "view-ui-plus";
 import {AccountRegister} from "@/api/account.ts";
 import {getCurrentInstance} from "vue";
 import {useUserStore} from "@/stores/user.ts";
@@ -38,12 +38,11 @@ function handleSubmit(valid:any, data: any) {
   console.log('da',data);
 
   AccountRegister(data).then((res:any) => {
-    if (res.success) {
+    if (res) {
 
 
-        let dataRes = res.data;
-        console.log("RegisterData", dataRes);
-        if (dataRes.account) {
+        console.log("RegisterData", res);
+        if (res.account) {
         }
       instance?.proxy?.$Message.success({
         content:"注册成功",
@@ -74,6 +73,9 @@ function handleChangePassword() {
   <ActionBar title="注册" />
     <div class="demo-login flex justify-center" >
       <Card class="card">
+        <div class="logo flex  justify-center">
+          <Image  src="./src/assets/logo.png" width="100px" height="100px" />
+        </div>
     <Login @on-submit="handleSubmit">
       <UserName name="username" placeholder="手机号或邮箱选其一" />
       <Captcha name="captcha" v-if="false"  @on-get-captcha="handleGetCaptcha" />

@@ -41,8 +41,8 @@ let userStore = useUserStore();
 let router = useRouter();
 let route = useRoute();
 
-let groupManager = IMIOGroupManager.getInstance().setIMIOClient(imioClient);
-let contactManager = IMIOContactManager.getInstance().setIMIOClient(imioClient);
+let groupManager = IMIOGroupManager.getInstance().setClient(imioClient);
+let contactManager = IMIOContactManager.getInstance().setClient(imioClient);
 
 let imioContact : IMIOContact | null = null
 let joinId: string = '';
@@ -484,7 +484,7 @@ function signOut() {
           <template #label>
             <div>
             <Text :ellipsis-config="{rows:3,tooltip:true}">
-              群公告群公告群公告群公告群公告群公告群公告群公告群公告群公告群公告群公告群公告群公告群公告
+
             </Text>
             </div>
           </template>

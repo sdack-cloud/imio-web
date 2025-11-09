@@ -12,7 +12,7 @@ let instance = getCurrentInstance();
 let appStore = useAppStore();
 let router = useRouter();
 let imioClient = IMIOClient.getInstance();
-
+appStore.homeIdx = 1;
 // export interface DialogObj{
 //   joinId:number;
 //   nickname:string;

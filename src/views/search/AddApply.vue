@@ -8,8 +8,8 @@ import {getCurrentInstance, onMounted, reactive, ref} from "vue";
 import {IMIOClient,IMIOContactManager,IMIOContact,IMIOGroupManager,IMIOGroup} from 'imio-sdk-lite'
 import {useUserStore} from "@/stores/user.ts";
 let imioClient = IMIOClient.getInstance();
-let groupManager = IMIOGroupManager.getInstance().setIMIOClient(imioClient);
-let contactManager = IMIOContactManager.getInstance().setIMIOClient(imioClient);
+let groupManager = IMIOGroupManager.getInstance().setClient(imioClient);
+let contactManager = IMIOContactManager.getInstance().setClient(imioClient);
 let router = useRouter();
 let route = useRoute();
 let instance = getCurrentInstance();
@@ -44,7 +44,12 @@ function handleSubmit() {
     loading.value = true
     if (groupObj.isGroup) {
       groupManager.joinGroup(groupObj.groupId,text.value).then(res => {
-        instance?.proxy?.$Message.success("操作成功")
+        instance?.proxy?.$Message.success({
+          content:"操作成功",
+          onClose:() => {
+            router.back()
+          }
+        })
         loading.value = false
       }).catch(err => {
         instance?.proxy?.$Message.error("操作失败 "+(err.message))
@@ -52,7 +57,12 @@ function handleSubmit() {
       })
     } else {
       contactManager.addContact(groupObj.groupId,text.value).then(res => {
-        instance?.proxy?.$Message.success("操作成功")
+        instance?.proxy?.$Message.success({
+          content:"操作成功",
+          onClose:() => {
+            router.back()
+          }
+        })
         loading.value = false
       }).catch(err => {
         instance?.proxy?.$Message.error("操作失败"+(err.message))
