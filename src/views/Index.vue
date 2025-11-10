@@ -29,7 +29,6 @@ let imioClient = IMIOClient.getInstance();
 
 
 onMounted(() => {
-  console.warn('Index onMounted',imioClient.connectStatus);
   let token = Cookies.get("token");
   if (token) {
     let splitToken = token.split(' ');

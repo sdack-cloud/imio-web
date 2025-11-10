@@ -140,8 +140,8 @@ const avatarList = [
 
 <style scoped>
 .ivu-image {
-  max-width: 250px;
-  max-height: 250px;
+  max-width: 150px;
+  max-height: 150px;
 }
 .chat-card {
   margin: 0px 10px 0px 10px;

@@ -7,6 +7,8 @@ import {useRouter} from "vue-router";
 import {AccountLogin} from "@/api/account.ts";
 import Cookies from 'js-cookie';
 import {User, useUserStore} from "@/stores/user.ts";
+
+import logo from '@/assets/logo.png'
 let router = useRouter();
 let instance = getCurrentInstance();
 let userStore = useUserStore();
@@ -36,7 +38,7 @@ function handleSubmit(valid:any, data: any) {
     return
   }
   AccountLogin(data).then(res => {
-    console.log(res);
+    // console.log(res);
     if (res && res.access_token) {
       instance?.proxy?.$Message.success("登录成功")
       Cookies.set("token",`${res.token_type} ${res.access_token}`);
@@ -54,7 +56,7 @@ function handleSubmit(valid:any, data: any) {
     instance?.proxy?.$Message.error("账号或密码不正确")
   })
 
-  console.log(data)
+  // console.log(data)
 }
 
 function  getJwtPayload(token:string): Object {
@@ -87,7 +89,7 @@ function handleForgot() {
     <div class="demo-login flex justify-center" >
       <Card  class="card ">
       <div class="logo flex  justify-center">
-        <Image  src="@/src/assets/logo.png" width="100px" height="100px" />
+        <Image  :src="logo" width="100px" height="100px" />
       </div>
 
       <Login @on-submit="handleSubmit">

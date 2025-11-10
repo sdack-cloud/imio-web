@@ -21,7 +21,7 @@ let router = useRouter();
 let appStore  = useAppStore();
 let instance = getCurrentInstance();
 
-console.log("App ======== setup")
+// console.log("App ======== setup")
 appStore.windowMedia.innerHeight = window.innerWidth+""
 appStore.windowMedia.innerHeight = window.innerHeight+""
 
@@ -30,13 +30,13 @@ window.addEventListener('resize', (e: any) => {
   appStore.windowMedia.innerWidth = e.target.innerWidth+"";
 
   // instance?.proxy?.$Message.info("Height:"+e.target.innerHeight)
-  console.log('innerHeight',appStore.windowMedia.innerHeight)
-  console.log('innerWidth',appStore.windowMedia.innerWidth)
+  // console.log('innerHeight',appStore.windowMedia.innerHeight)
+  // console.log('innerWidth',appStore.windowMedia.innerWidth)
 })
 
 const clientListener = {
   onConnectStatus(status: IMIOClientConnectStatus, retry: number): void {
-    console.log('onConnectStatus',status,retry);
+    // console.log('onConnectStatus',status,retry);
     if (status == IMIOClientConnectStatus.DONE) {
       appStore.linkStatus = ''
     }
@@ -79,7 +79,7 @@ const messageListener = {
   }, onMessageRead(contactId: number, messageId: string): void {
   }, onMessageRevoke(contactId: number, messageId: string): void {
   }, onNotice(message: IMIOMessage): void {
-    console.log('App onNotice',message)
+    // console.log('App onNotice',message)
     if (message.title.length) {
       instance?.proxy?.$Notice.open({
         title: message.title,
@@ -92,7 +92,7 @@ const messageListener = {
 imioClient.addMessageListener(messageListener);
 imioClient.clientListener = clientListener
 onMounted(() => {
-  console.warn('App onMounted');
+  // console.warn('App onMounted');
   let token = Cookies.get("token");
   // if (token) {
   //   let splitToken = token.split(' ');

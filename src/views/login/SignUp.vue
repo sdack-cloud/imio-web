@@ -6,6 +6,8 @@ import {AccountRegister} from "@/api/account.ts";
 import {getCurrentInstance} from "vue";
 import {useUserStore} from "@/stores/user.ts";
 import router from "@/router";
+
+import logo from '@/assets/logo.png'
 let userStore = useUserStore();
 
 
@@ -35,13 +37,12 @@ function handleSubmit(valid:any, data: any) {
     return
   }
 
-  console.log('da',data);
 
   AccountRegister(data).then((res:any) => {
     if (res) {
 
 
-        console.log("RegisterData", res);
+        // console.log("RegisterData", res);
         if (res.account) {
         }
       instance?.proxy?.$Message.success({
@@ -74,7 +75,7 @@ function handleChangePassword() {
     <div class="demo-login flex justify-center" >
       <Card class="card">
         <div class="logo flex  justify-center">
-          <Image  src="./src/assets/logo.png" width="100px" height="100px" />
+          <Image  :src="logo" width="100px" height="100px" />
         </div>
     <Login @on-submit="handleSubmit">
       <UserName name="username" placeholder="手机号或邮箱选其一" />

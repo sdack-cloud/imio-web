@@ -70,11 +70,9 @@ function callAction(index: number) {
     cancelText:"拒绝",
     okText:"同意",
     onOk: () => {
-      console.log('OK');
       handelApply(index,true)
     },
     onCancel: () => {
-      console.log('Cancel')
       handelApply(index,false)
     },
     render: (h:any) => {

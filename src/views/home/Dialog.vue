@@ -65,8 +65,8 @@ imioClient.addMessageListener(messageListener)
 
 onBeforeUnmount(() => {
   imioClient.removeMessageListener(messageListener);
-  let length = imioClient.messageListener.length;
-  console.log("Dialog onBeforeUnmount",length)
+  // let length = imioClient.messageListener.length;
+  // console.log("Dialog onBeforeUnmount",length)
 })
 
 let dialogStr = window.localStorage.getItem('dialog');
@@ -95,7 +95,7 @@ function jump(i:number) {
   item.tip = 0
   listData.sort((a,b) => a.sentDate!!.getTime() - b.sentDate!!.getTime())
   window.localStorage.setItem("dialog", JSON.stringify(listData))
-  console.log('jump', item)
+  // console.log('jump', item)
   router.push({
     name:'Chat',
     query:{

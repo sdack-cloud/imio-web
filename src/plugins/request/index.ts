@@ -36,13 +36,13 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
     config => {
-        console.warn("interceptors.request",config)
+        // console.warn("interceptors.request",config)
 
         return config;
     },
     error => {
         // 发送失败
-        console.log(error);
+        console.error(error);
         Promise.reject(error);
     }
 );
@@ -50,7 +50,7 @@ service.interceptors.request.use(
 // 响应拦截器
 service.interceptors.response.use(
     response => {
-        console.warn("interceptors.response",response)
+        // console.warn("interceptors.response",response)
         // dataAxios 是 axios 返回数据中的 data
         const dataAxios = response.data;
 

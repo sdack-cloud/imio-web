@@ -126,7 +126,6 @@ function handleConfirm(i: number,title:string) {
     cancelText:"取消",
     okText:"确定",
     onOk: () => {
-      console.log('OK',i);
       if (i == 1) {
         handleGroupName()
       }
@@ -141,7 +140,6 @@ function handleConfirm(i: number,title:string) {
       }
     },
     onCancel: () => {
-      console.log('Cancel')
       confirmText.value = '';
     },
     render: (h:any) => {
@@ -165,11 +163,9 @@ function handleConfirm2() {
     cancelText:"取消",
     okText:"确定",
     onOk: () => {
-      console.log('OK');
       handleGroupAsk();
     },
     onCancel: () => {
-      console.log('Cancel')
       confirmText.value = '';
       askText.value = '';
     },
@@ -208,11 +204,9 @@ function handleConfirm3(i: number,title: string) {
   instance?.proxy?.$Modal.info({
     title: title,
     onOk: () => {
-      console.log('OK');
       handleGroupCede(element.userId);
     },
     onCancel: () => {
-      console.log('Cancel')
     },
   });
 }
@@ -484,7 +478,6 @@ function signOut() {
           <template #label>
             <div>
             <Text :ellipsis-config="{rows:3,tooltip:true}">
-
             </Text>
             </div>
           </template>

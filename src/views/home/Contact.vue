@@ -31,14 +31,12 @@ appStore.homeIdx = 2;
 const noticeCount = ref(0)
 const actionCount = ref(0)
 
-console.log('setup')
 
 const messageListener = {
   onMessage(message: IMIOMessage): void {
   }, onMessageRead(contactId: number, messageId: string): void {
   }, onMessageRevoke(contactId: number, messageId: string): void {
   }, onNotice(message: IMIOMessage): void {
-    console.log('Contact onNotice',message)
     if (message.label == IMIOMessageLabel.notice) {
       nextTick(() => {
         noticeCount.value = noticeCount.value+1;
@@ -71,7 +69,6 @@ function callBarAction(i: number | null) {
 }
 
 onMounted(() => {
-  console.warn("Contact onMounted")
   if (contactList.length == 0) {
     getContactList();
   }
@@ -80,11 +77,8 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
-  console.log("Contact onBeforeUnmount")
   imioClient.removeMessageListener(messageListener);
   imioClient.removeContactListener(contactListener);
-  let length = imioClient.messageListener.length;
-  console.log('length',length)
 })
 
 
@@ -97,7 +91,7 @@ function getContactList() {
       } else {
         find.status = item.status
       }
-      console.log(item)
+      // console.log(item)
     }
     getMyNotice()
   }).catch((e) => {

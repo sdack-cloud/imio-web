@@ -1,5 +1,5 @@
 {
-  "name": "view-ui-project-ts",
+  "name": "imio-web",
   "private": true,
   "version": "1.0.0",
   "description": "a template project for vue3, ViewUIPlus, TypeScript and Vite.",
@@ -17,7 +17,7 @@
     "node": "^18.20.6 || >=18.20.6"
   },
   "dependencies": {
-    "imio-sdk-lite": "^0.0.56",
+    "imio-sdk-lite": "^0.1.1",
     "js-cookie": "^3.0.5",
     "pinia": "^3.0.3",
     "view-ui-plus": "^1.3.1",

@@ -2,7 +2,7 @@
 
 import ActionBar from "@/components/ActionBar.vue";
 import {Captcha, Card, FooterToolbar, Image, Password, Submit, UserName} from "view-ui-plus";
-
+import logo from '@/assets/logo.png'
 
 function handleSubmit() {
 
@@ -24,7 +24,7 @@ function handleChangePassword() {
     <div class="demo-login flex justify-center">
       <Card class="card">
         <div class="logo flex  justify-center">
-          <Image src="./src/assets/logo.png" width="100px" height="100px"/>
+          <Image :src="logo" width="100px" height="100px"/>
         </div>
         <Login @on-submit="handleSubmit">
           <UserName name="username"/>

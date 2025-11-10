@@ -16,6 +16,6 @@ app.use(pinia)
     .use(ViewUiPlus)
     .mount('#app')
 
-let clientOption = IMIOClientOption.newBuilder().whitAppId('121').whitDebug(true)
+let clientOption = IMIOClientOption.newBuilder().whitAppId('121').whitDebug(false)
     .whitHost("114.67.110.86:8000").build();
 let imioClient = IMIOClient.getInstance().whitOption(clientOption);

@@ -108,7 +108,6 @@ function handleConfirm() {
         handleMyName()
     },
     onCancel: () => {
-      console.log('Cancel')
       confirmText.value = '';
     },
     render: (h:any) => {
@@ -227,7 +226,6 @@ function handleDialog() {
   }
   groupManager.createDialogue(item.userId,Number(joinId)).then(res => {
     instance?.proxy?.$Message.success("操作成功")
-    console.log("Dialogue",res)
     isDrawer.value = false;
   }).catch(err => {
     instance?.proxy?.$Message.error("操作失败");

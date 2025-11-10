@@ -29,7 +29,7 @@ import {
   IMIOMember, IMIOGroupManager, IMIOGroup,IMIOMessageSenderHint
 } from 'imio-sdk-lite'
 import ChatTipItem from "@/components/chat/ChatTipItem.vue";
-
+import iconImg from '@/assets/icon/image-outline.svg';
 let router = useRouter();
 let route = useRoute();
 let appStore = useAppStore();
@@ -69,7 +69,6 @@ let avatar = ''
 
 const messageListener = {
   onMessage(message: IMIOMessage): void {
-    console.log("message",message)
     if (message.joinId.toString() == joinId) {
       if (imioContact.isGroup) {
         try {
@@ -82,7 +81,6 @@ const messageListener = {
                 it.tip = find.nickname;
               }
             }
-            console.log("hintList", message.hintList)
 
           }
           if (message.notifyList) {
@@ -133,7 +131,6 @@ imioClient.addMessageListener(messageListener);
 
 onMounted(() => {
   page = 0;
-  console.warn("Chat onMounted", route.query)
   name.value  = route.query.name as string;
   joinId = route.query.join as string;
   if (!joinId) {
@@ -153,19 +150,19 @@ onMounted(() => {
   }
 
   imioContact = contactList.find(it => it.joinId == joinId);
-  console.log('Contact =>',imioContact)
+  // console.log('Contact =>',imioContact)
   getMessageList();
   if (imioContact && imioContact.isGroup) {
-    // getGroup()
+    getGroup()
   }
 })
 
 
 onBeforeUnmount(() => {
-  console.log("Chat onBeforeUnmount")
+  // console.log("Chat onBeforeUnmount")
   imioClient.removeMessageListener(messageListener);
   let length = imioClient.messageListener.length;
-  console.log('length',length)
+  // console.log('length',length)
 })
 
 
@@ -240,7 +237,7 @@ function getMessageList() {
       }
     }
     listData.sort((a,b) => a.sentDate.getTime() - b.sentDate.getTime());
-    console.log('list',listData);
+    // console.log('list',listData);
     nextTick(()=> {
       const height = document.querySelector('.scroll-content .ivu-scroll-content')?.clientHeight;
       (scrollRef.value as any)?.$refs.scrollContainer.scrollTo(0, height!! + 100);
@@ -315,8 +312,6 @@ function handleCite(i:number) {
     return
   }
   Object.assign(citeMessage.value,item)
-  console.log('handleCite',item)
-  console.log('handleCite1',citeMessage.value)
 }
 function handleCopy(i:number) {
 
@@ -400,6 +395,10 @@ function callSend() {
       console.warn("发送失败", err)
       text.value = ''
       citeMessage.value = {}
+      let message = err.message+"";
+      if (message.length) {
+        instance?.proxy?.$Message.error(message)
+      }
     });
   } else {
     if (checkMember.length) {
@@ -428,6 +427,10 @@ function callSend() {
       checkMember.splice(0,checkMember.length)
       citeMessage.value = {}
       text.value = ''
+      let message = err.message+"";
+      if (message.length) {
+        instance?.proxy?.$Message.error(message)
+      }
     });
   }
 
@@ -484,7 +487,7 @@ function callSend() {
     <div class="footer-toolbar-tool" v-show="isTool">
       <div class="flex  align-start">
         <Link to="https://tinyjpg.com" target="_blank" class="flex flex-direction align-center">
-            <Image src="./src/assets/icon/image-outline.svg" width="30px" height="30px"/>
+            <Image :src="iconImg" width="30px" height="30px"/>
           <Text>图片</Text>
         </Link>
       </div>

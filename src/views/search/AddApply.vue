@@ -27,7 +27,7 @@ const text = ref("");
 let userStore = useUserStore();
 
 onMounted(() => {
-  console.log('params',userStore.groupObj)
+  // console.log('params',userStore.groupObj)
 
   if (!userStore.groupObj.length) {
     router.back();
