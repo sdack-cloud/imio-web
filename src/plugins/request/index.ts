@@ -30,7 +30,7 @@ function errorLog (err: any) {
 // 创建一个 axios 实例
 const service = axios.create({
     baseURL: "",
-    timeout: 5 * 1000
+    timeout: 15 * 1000
 });
 
 // 请求拦截器

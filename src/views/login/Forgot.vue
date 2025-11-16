@@ -3,6 +3,8 @@
 import ActionBar from "@/components/ActionBar.vue";
 import {Captcha, Card, FooterToolbar, Image, Password, Submit, UserName} from "view-ui-plus";
 import logo from '@/assets/logo.png'
+import {useAppStore} from "@/stores/app.ts";
+let appStore = useAppStore();
 
 function handleSubmit() {
 
@@ -26,14 +28,14 @@ function handleChangePassword() {
         <div class="logo flex  justify-center">
           <Image :src="logo" width="100px" height="100px"/>
         </div>
-        <Login @on-submit="handleSubmit">
+        <Login @on-submit="handleSubmit" :enter-to-submit="true">
           <UserName name="username"/>
           <Captcha name="captcha" @on-get-captcha="handleGetCaptcha"/>
 
           <Password name="password"/>
           <Password name="passwordConfirm" placeholder="确认密码"/>
 
-          <Submit>提交</Submit>
+          <Submit :loading="appStore.loading">提交</Submit>
         </Login>
 
       </Card>
