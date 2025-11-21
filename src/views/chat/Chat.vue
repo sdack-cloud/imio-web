@@ -383,7 +383,7 @@ function callSend() {
     messageSender = IMIOMessageSender.buildImage(Number(joinId),'', text.value);
   }
 
-  if (citeMessage.value.length) {
+  if (citeMessage.value && citeMessage.value.messageId) {
     messageSender.withCite(citeMessage.value.messageId)
   }
   if (!imioContact.isGroup) {

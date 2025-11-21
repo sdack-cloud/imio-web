@@ -113,13 +113,16 @@ function handleActionMore(i:number) {
       case 1:
         router.push('createGroup')
         break;
+      case 2:
+        router.push('createTeam')
+        break;
     }
 }
 
 </script>
 
 <template>
-  <ActionBar title="对话" :subtitle="appStore.linkStatus"  :isBack="false" :more-list="['加好友','创建群聊']" @action="handleActionMore"/>
+  <ActionBar title="对话" :subtitle="appStore.linkStatus"  :isBack="false" :more-list="['加好友','创建群聊','创建小队']" @action="handleActionMore"/>
   <div class="page-body">
       <Scroll :height="Number(appStore.windowMedia.innerHeight) - 120">
         <DialogItem :dialog="item" @click="jump(i)" v-for="(item,i) in listData" />

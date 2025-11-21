@@ -16,6 +16,15 @@ const frameIn : RouteRecordRaw[] = [
         }
     },
     {
+        path: '/chat2',
+        name: 'TChat',
+        component: () => import('@/views/tchat/TChat.vue'),
+        meta: {
+            title: '对话',
+            auth: true
+        }
+    },
+    {
         path: '/buddyInfo',
         name: 'BuddyInfo',
         component: () => import('@/views/chat/BuddyInfo.vue'),
@@ -112,6 +121,15 @@ const frameIn : RouteRecordRaw[] = [
         component: () => import('@/views/group/CreateGroup.vue'),
         meta: {
             title: '创建群聊',
+            auth: true
+        }
+    },
+    {
+        path: '/createTeam',
+        name: 'CreateTeam',
+        component: () => import('@/views/group/CreateTeam.vue'),
+        meta: {
+            title: '创建小队',
             auth: true
         }
     },

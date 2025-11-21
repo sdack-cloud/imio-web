@@ -17,5 +17,5 @@ app.use(pinia)
     .mount('#app')
 
 let clientOption = IMIOClientOption.newBuilder().whitAppId('121').whitDebug(false)
-    .whitHost("114.67.110.86:8000").build();
+    .whitHost("localhost:8000").build();
 let imioClient = IMIOClient.getInstance().whitOption(clientOption);
